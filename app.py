@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
 import json
+import math
 from pdfer.core import pdfer
 
 from flask import Flask, request, make_response
@@ -14,8 +15,9 @@ app.url_map.strict_slashes = False
 
 @app.route('/api/print/', methods=['GET'])
 def print_page():
+    dimensions = request.args.getlist('dimensions')
     print_data = {
-        'dimensions': request.args.getlist('dimensions'),
+        'dimensions': dimensions,
         'zoom': request.args['zoom'],
         'center': request.args.getlist('center'),
         'overlays': {
@@ -23,7 +25,11 @@ def print_page():
           'point_overlays': [],
         },
     }
-    path = pdfer(print_data)
+    short_side, long_side = sorted(dimensions)
+    tiles_across = math.ceil(float(short_side) / 256.0)
+    tiles_up = math.ceil(float(long_side) / 256.0)
+    page_size = (int(short_side), int(long_side), int(tiles_across), int(tiles_up))
+    path = pdfer(print_data, page_size=page_size)
     resp = make_response(open(path, 'rb').read())
     resp.headers['Content-Type'] = 'application/pdf'
     now = datetime.now().isoformat().split('.')[0]
