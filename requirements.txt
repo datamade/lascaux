@@ -1,2 +1,4 @@
 Flask
+numpy
 requests
+shapely

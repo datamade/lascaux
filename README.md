@@ -9,10 +9,10 @@ Exposing a web API that returns a ready-to-print PDF
 This is by far the biggest hassle. Once it is done, however, it never needs to
 be done again. These instructions work on Ubuntu 12.04. You’ll probably need to
 modify them to suit your particular environment. These directions also assume
-you have [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/) 
+you have [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/)
 setup as well.
 
-```bash 
+```bash
 $ mkvirtualenv printmatic
 $ pip install numpy
 $ sudo apt-get install cmake libgtk2.0-dev pkg-config libavcodec-dev \
@@ -33,3 +33,46 @@ $ cmake -DMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=$VIRTUAL_ENV/local/ \
 $ make -j8 # Set the number here to the number of processing cores you have
 $ make install
 ```
+
+### Mac install
+
+#### Make a virtual environment
+
+    $ mkvirtualenv printmatic
+
+#### Install the required libraries
+
+    $ pip install -r requirements
+
+#### Install OpenCV
+
+This is a hassle. Maybe use brew?
+
+I already had OpenCV installed, and had to copy `cv2.so` to my virtualenv's
+`site-packages`. This probably can be dealt with better by some `PATH`
+manuvering.
+
+#### Install Cairo
+
+Getting Cairo set up has been a major pain. The most common problems are caused
+by it simply not being found. Try:
+
+    export PKG_CONFIG_PATH=/usr/X11/lib/pkgconfig
+
+(or just add it right to your `PATH`)
+
+#### Install py2cairo
+
+It seems like you have to do this by hand now:
+
+    curl http://cairographics.org/releases/py2cairo-1.10.0.tar.bz2 > py2cairo.tar.bz2
+    tar -xvf py2cairo.tar.bz2
+    ./waf configure --prefix=FULL_PATH_TO_VIRTUALENV
+    ./waf build
+    ./waf install
+
+### Running the app
+
+    $ python app.py
+
+
