@@ -42,7 +42,7 @@ $ make install
 
 #### Install the required libraries
 
-    $ pip install -r requirements
+    $ pip install -r requirements.txt
 
 #### Install OpenCV
 
