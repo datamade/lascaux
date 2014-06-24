@@ -82,21 +82,6 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
         bmin_rx, bmin_ry = mercator.PixelsToRaster(bmin_px,bmin_py,int(grid['zoom']))
         im = cairo.ImageSurface.create_from_png(outp_name)
         ctx = cairo.Context(im)
-        for beat_overlay in overlays.get('beat_overlays'):
-            color = hex_to_rgb('#7B3294')
-            boundary = requests.get('http://crimearound.us/data/beats/%s.geojson' % beat_overlay)
-            if boundary.status_code == 200:
-                coords = boundary.json()['coordinates'][0]
-                x, y = get_pixel_coords(coords[0], grid['zoom'], bmin_rx, bmin_ry)
-                ctx.move_to(x,y)
-                ctx.set_line_width(4.0)
-                for p in coords[1:]:
-                    x, y = get_pixel_coords(p, grid['zoom'], bmin_rx, bmin_ry)
-                    red, green, blue = [float(c) for c in color]
-                    ctx.set_source_rgba(red/255, green/255, blue/255, 0.7)
-                    ctx.line_to(x,y)
-                ctx.close_path()
-                ctx.stroke()
         if overlays.get('shape_overlay'):
             shape_overlay = overlays['shape_overlay']
             color = hex_to_rgb('#f06eaa')

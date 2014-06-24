@@ -61,6 +61,12 @@ by it simply not being found. Try:
 
 (or just add it right to your `PATH`)
 
+On Ubuntu you should be able to get libcairo and the appropriate header files thusly:
+
+```bash 
+$ sudo apt-get install libcairo2-dev
+```
+
 #### Install py2cairo
 
 It seems like you have to do this by hand now:
@@ -75,4 +81,15 @@ It seems like you have to do this by hand now:
 
     $ python app.py
 
+### Making a request
 
+``` python
+>>> import requests
+>>> params = {'dimensions': [3000, 5000], 'center': [-87.6324462890625,41.88489863827785], 'zoom': 17}
+>>> r = requests.get('http://0.0.0.0:5000/api/print/', params=params)
+>>> with open('test.pdf', 'wb') as f:
+        f.write(r.content)
+```
+
+That should give you a file called ``test.pdf`` which will, for the time being,
+have no overlays. **Overlays documentation coming soon!**
