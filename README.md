@@ -1,6 +1,6 @@
-# Map-Print-O-Matic
+# Lascaux
 
-Exposing a web API that returns a ready-to-print PDF
+Web API for printing high resolution PDF maps
 
 ### Installation
 
