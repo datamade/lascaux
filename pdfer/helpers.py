@@ -4,9 +4,9 @@ from urlparse import urlparse
 from globalmaptiles import GlobalMercator
 mercator = GlobalMercator()
 
-def dl_write(url):
+def dl_write(url, base_name):
     path = urlparse(url)
-    name = path.path.replace('/', '-')
+    name = '%s_%s' % (base_name, '-'.join(path.path.split('/')[-3:]))
     full_path = os.path.join('/tmp', name)
     try:
         f = open('/tmp/' + name)
@@ -16,10 +16,10 @@ def dl_write(url):
         outp.write(tile.content)
     return name
 
-def dl_write_all(links):
+def dl_write_all(links, base_name):
     names = []
     for link in links:
-        names.append(dl_write(link))
+        names.append(dl_write(link, base_name))
     return names
 
 def hex_to_rgb(value):
