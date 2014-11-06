@@ -67,16 +67,6 @@ On Ubuntu you should be able to get libcairo and the appropriate header files th
 $ sudo apt-get install libcairo2-dev
 ```
 
-#### Install py2cairo
-
-It seems like you have to do this by hand now:
-
-    curl http://cairographics.org/releases/py2cairo-1.10.0.tar.bz2 > py2cairo.tar.bz2
-    tar -xvf py2cairo.tar.bz2
-    ./waf configure --prefix=FULL_PATH_TO_VIRTUALENV
-    ./waf build
-    ./waf install
-
 ### Running the app
 
     $ python app.py
