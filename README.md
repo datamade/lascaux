@@ -85,11 +85,18 @@ It seems like you have to do this by hand now:
 
 ``` python
 >>> import requests
->>> params = {'dimensions': [3000, 5000], 'center': [-87.6324462890625,41.88489863827785], 'zoom': 17}
+>>> params = {
+              'center': [-87.69358, 41.786456],
+              'dimensions': [3000, 5000],
+              'zoom': 17
+            }
+# You can also optionally include LocalData survey info
+>>> params['survey'] = '<survey UUID>',
+>>> params['survey_filter'] = 'Is-property-vacant'
+>>> params['survey_filter_value'] = 'Yes'
 >>> r = requests.get('http://0.0.0.0:5000/api/print/', params=params)
 >>> with open('test.pdf', 'wb') as f:
         f.write(r.content)
 ```
 
-That should give you a file called ``test.pdf`` which will, for the time being,
-have no overlays. **Overlays documentation coming soon!**
+That should give you a file called ``test.pdf`` in your current working directory
