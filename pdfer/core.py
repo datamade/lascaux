@@ -5,7 +5,7 @@ from operator import itemgetter
 from itertools import groupby
 import cv2
 import numpy as np
-import cairo
+import cairocffi as cairo
 import os
 from helpers import dl_write_all, hex_to_rgb, get_pixel_coords
 from datetime import datetime

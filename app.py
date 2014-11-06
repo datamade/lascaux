@@ -25,6 +25,7 @@ def print_page():
         print_data['survey'] = request.args['survey']
         print_data['survey_filter'] = request.args.get('survey_filter')
         print_data['survey_filter_value'] = request.args.get('survey_filter_value')
+    print request.args.get('survey')
     short_side, long_side = sorted(dimensions)
     tiles_across = math.ceil(float(short_side) / 256.0)
     tiles_up = math.ceil(float(long_side) / 256.0)
@@ -37,5 +38,5 @@ def print_page():
     return resp
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 5002))
     app.run(host='0.0.0.0', port=port, debug=True)
