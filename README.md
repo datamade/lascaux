@@ -1,6 +1,35 @@
 # Lascaux
 
-Web API for printing high resolution PDF maps
+Web API for printing high resolution PDF maps.
+
+### Usage
+Lascaux works by passing in a link to a set of map tiles similar to how Leaflet loads in [TileLayers](http://leafletjs.com/reference.html#tilelayer). You can also set the map center, zoom level and size of your desired PDF.
+
+Parameters:
+* `center` - latitude and longitude of map center
+* `dimensions` - height and width of desired map in pixels
+* `zoom` - soom level resolution of map
+* `source_url` - encoded URL to a tile layer in the format 'http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png'
+
+Example:
+http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&source_url=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png
+
+### Making a request in python
+
+``` python
+>>> import requests
+>>> params = {
+              'center': [-87.69358, 41.786456],
+              'dimensions': [3000, 5000],
+              'zoom': 17,
+              'source_url': 'http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png'
+            }
+>>> r = requests.get('http://lascaux.datamade.us', params=params)
+>>> with open('my_map.pdf', 'wb') as f:
+        f.write(r.content)
+```
+
+That should give you a file called ``my_map.pdf`` in your current working directory
 
 ### Installation
 
@@ -70,23 +99,3 @@ $ sudo apt-get install libcairo2-dev
 ### Running the app
 
     $ python app.py
-
-### Making a request
-
-``` python
->>> import requests
->>> params = {
-              'center': [-87.69358, 41.786456],
-              'dimensions': [3000, 5000],
-              'zoom': 17
-            }
-# You can also optionally include LocalData survey info
->>> params['survey'] = '<survey UUID>',
->>> params['survey_filter'] = 'Is-property-vacant'
->>> params['survey_filter_value'] = 'Yes'
->>> r = requests.get('http://0.0.0.0:5000/api/print/', params=params)
->>> with open('test.pdf', 'wb') as f:
-        f.write(r.content)
-```
-
-That should give you a file called ``test.pdf`` in your current working directory
