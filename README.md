@@ -3,13 +3,13 @@
 Web API for printing high resolution PDF maps.
 
 ### Usage
-Lascaux works by passing in a link to a set of map tiles similar to how Leaflet loads in [TileLayers](http://leafletjs.com/reference.html#tilelayer). You can also set the map center, zoom level and size of your desired PDF.
+Lascaux works by passing in a link to a set of [map tiles](https://www.mapbox.com/foundations/how-web-maps-work/) (similar to how [Leaflet](http://leafletjs.com/) loads in [TileLayers](http://leafletjs.com/reference.html#tilelayer)) and returning a high resolution PDF for printing. You can also set the map center, zoom level and size of your desired PDF.
 
 Parameters:
 * `center` - latitude and longitude of map center
 * `dimensions` - height and width of desired map in pixels
 * `zoom` - soom level resolution of map
-* `source_url` - encoded URL to a tile layer in the format 'http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png'
+* `source_url` - encoded URL to a tile layer in the format `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`
 
 Example:
 http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&source_url=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png
