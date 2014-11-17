@@ -9,7 +9,14 @@ Parameters:
 * `center` - latitude and longitude of map center
 * `dimensions` - height and width of desired map in pixels
 * `zoom` - soom level resolution of map
-* `source_url` - encoded URL to a tile layer in the format `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`
+
+Optional Parameters
+* `overlay_tiles` - encoded URL to a tile layer in the format `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`
+* `base_tiles` - encoded URL to a tile layer in the format `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`
+
+The difference between ``overlay_tiles`` and ``base_tiles`` is that
+``base_tiles`` will always be rendered on the bottom. This means that you
+should probably make sure that ``overlay_tiles`` has some kind of transparency.
 
 Example:
 http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&source_url=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png

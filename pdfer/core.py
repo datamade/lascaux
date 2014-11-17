@@ -18,6 +18,14 @@ PAGE_SIZES = {
     'tabloid': (2550,3300,10,14,),
 }
 
+def generateLinks(pattern, *args):
+    zoom, min_tile_x, min_tile_y, max_tile_x, max_tile_y = args
+    links = []
+    for ty in range(min_tile_y, max_tile_y + 1):
+        for tx in range(min_tile_x, max_tile_x + 1):
+            links.append(pattern.format(z=zoom, x=tx, y=ty))
+    return links
+
 def pdfer(data, page_size=PAGE_SIZES['letter']):
     overlays = data.get('overlays')
     grid = {'zoom': data.get('zoom')}
@@ -34,26 +42,30 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
     min_tile_y = center_tile_y - (tiles_up / 2)
     max_tile_x = min_tile_x + tiles_across
     max_tile_y = min_tile_y + tiles_up
-    base_links = []
-    base_pattern = 'http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{0}/{1}/{2}.png'
-    survey = None
-    if data.get('survey'):
-        survey_links = []
-        survey = data['survey']
-        survey_url = 'http://localdata-tiles.herokuapp.com/%s' % survey
-        if data.get('survey_filter'):
-            survey_url = '%s/filter/%s/%s' % \
-                (survey_url, data['survey_filter'], data['survey_filter_value'])
-    for ty in range(min_tile_y, max_tile_y + 1):
-        for tx in range(min_tile_x, max_tile_x + 1):
-            base_links.append(base_pattern.format(grid['zoom'], tx, ty))
-            if survey:
-                link = '{0}/tiles/{1}/{2}/{3}.png'.format(survey_url, grid['zoom'], tx, ty)
-                survey_links.append(link)
+
+    # Get base layer tiles
+    base_pattern = 'http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png'
+    if data.get('base_tiles'):
+        base_pattern = data['base_tiles']
+    base_links = generateLinks(base_pattern, 
+                               grid['zoom'], 
+                               min_tile_x, 
+                               min_tile_y, 
+                               max_tile_x, 
+                               max_tile_y)
     base_names = dl_write_all(base_links, 'base')
-    survey_names = None
-    if survey:
-        survey_names = dl_write_all(survey_links, 'survey')
+    
+    # Get overlay tiles
+    overlay_pattern = None
+    if data.get('overlay_tiles'):
+        overlay_pattern = data['overlay_tiles']
+        overlay_links = generateLinks(overlay_pattern, 
+                                   grid['zoom'], 
+                                   min_tile_x, 
+                                   min_tile_y, 
+                                   max_tile_x, 
+                                   max_tile_y)
+        overlay_names = dl_write_all(overlay_links, 'overlay')
     now = datetime.now()
     date_string = datetime.strftime(now, '%Y-%m-%d_%H-%M-%S')
     outp_name = os.path.join('/tmp', '{0}.png'.format(date_string))
@@ -65,28 +77,32 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
         fnames = ['/tmp/%s' % ('-'.join(f)) for f in images]
         array = []
         for img in fnames:
-            array.append(cv2.imread(img))
+            i = cv2.cvtColor(cv2.imread(img), cv2.COLOR_RGB2RGBA)
+            array.append(i)
         arrays.append(np.vstack(array))
     outp = np.hstack(arrays)
     cv2.imwrite(outp_name, outp)
-    if survey:
-        survey_outp_name = os.path.join('/tmp', 'survey_{0}.png'.format(date_string))
-        survey_image_names = ['-'.join(l.split('/')[-3:]) for l in survey_names]
-        survey_image_names = sorted([i.split('-')[-3:] for i in survey_image_names], key=itemgetter(1))
+    if overlay_pattern:
+        overlay_outp_name = os.path.join('/tmp', 'overlay_{0}.png'.format(date_string))
+        overlay_image_names = ['-'.join(l.split('/')[-3:]) for l in overlay_names]
+        overlay_image_names = sorted([i.split('-')[-3:] for i in overlay_image_names], key=itemgetter(1))
         arrays = []
-        for k,g in groupby(survey_image_names, key=itemgetter(1)):
+        for k,g in groupby(overlay_image_names, key=itemgetter(1)):
             images = list(g)
             fnames = ['/tmp/%s' % ('-'.join(f)) for f in images]
             array = []
             for img in fnames:
-                array.append(cv2.imread(img))
+                i = cv2.cvtColor(cv2.imread(img, -1), cv2.COLOR_RGB2RGBA)
+                array.append(i)
             arrays.append(np.vstack(array))
         outp = np.hstack(arrays)
-        cv2.imwrite(survey_outp_name, outp)
-        base = cv2.imread(outp_name)
-        overlay = cv2.imread(survey_outp_name)
-        merged = base + overlay
-        cv2.imwrite(outp_name, merged)
+        cv2.imwrite(overlay_outp_name, outp)
+        base = cv2.imread(outp_name, -1)
+        overlay = cv2.imread(overlay_outp_name, -1)
+        # merged = base + overlay
+        for c in range(0,3):
+            base[0:0+overlay.shape[0], 0:0+overlay.shape[1], c] = overlay[:,:,c] * (overlay[:,:,3]/255.0) +  base[0:0+overlay.shape[0], 0:0+overlay.shape[1], c] * (1.0 - overlay[:,:,3]/255.0)
+        cv2.imwrite(outp_name, base)
 
     ###########################################################################
     # Code below here is for drawing vector layers within the PDF             #
@@ -164,5 +180,6 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
     ctx.set_source_surface(image, 0, 0)
     ctx.paint()
     pdf.finish()
+    print pdf_name
     return pdf_name
 

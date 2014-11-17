@@ -2,11 +2,18 @@ import requests
 import os
 from urlparse import urlparse
 from globalmaptiles import GlobalMercator
+from hashlib import md5
+from multiprocessing import Pool
 mercator = GlobalMercator()
 
-def dl_write(url, base_name):
+def dl_write(*args):
+    url, base_name = args[0]
     path = urlparse(url)
-    name = '%s_%s' % (base_name, '-'.join(path.path.split('/')[-3:]))
+    url_hash = md5(url).hexdigest()
+    name = '{url_hash}_{base_name}_{parts}'\
+        .format(base_name=base_name, 
+                parts='-'.join(path.path.split('/')[-3:]),
+                url_hash=unicode(url_hash))
     full_path = os.path.join('/tmp', name)
     try:
         f = open('/tmp/' + name)
@@ -17,9 +24,10 @@ def dl_write(url, base_name):
     return name
 
 def dl_write_all(links, base_name):
-    names = []
-    for link in links:
-        names.append(dl_write(link, base_name))
+    pool = Pool(processes=10)
+    args = [(l, base_name,) for l in links]
+    names = pool.map(dl_write, args)
+    pool.close()
     return names
 
 def hex_to_rgb(value):

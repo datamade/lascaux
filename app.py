@@ -15,21 +15,20 @@ app.url_map.strict_slashes = False
 
 @app.route('/', methods=['GET'])
 def print_page():
-    dimensions = request.args.getlist('dimensions')
     print_data = {
-        'dimensions': dimensions,
+        'dimensions': request.args['dimensions'].split(','),
         'zoom': request.args['zoom'],
-        'center': request.args.getlist('center'),
+        'center': request.args['center'].split(','),
     }
-    if request.args.get('survey'):
-        print_data['survey'] = request.args['survey']
-        print_data['survey_filter'] = request.args.get('survey_filter')
-        print_data['survey_filter_value'] = request.args.get('survey_filter_value')
-    print request.args.get('survey')
-    short_side, long_side = sorted(dimensions)
+    if request.args.get('overlay_tiles'):
+        print_data['overlay_tiles'] = request.args['overlay_tiles']
+    if request.args.get('base_tiles'):
+        print_data['base_tiles'] = request.args['base_tiles']
+    short_side, long_side = sorted(print_data['dimensions'])
     tiles_across = math.ceil(float(short_side) / 256.0)
     tiles_up = math.ceil(float(long_side) / 256.0)
     page_size = (int(short_side), int(long_side), int(tiles_across), int(tiles_up),)
+    print print_data
     path = pdfer(print_data, page_size=page_size)
     resp = make_response(open(path, 'rb').read())
     resp.headers['Content-Type'] = 'application/pdf'
@@ -38,5 +37,5 @@ def print_page():
     return resp
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5002))
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
