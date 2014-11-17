@@ -99,9 +99,12 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
         cv2.imwrite(overlay_outp_name, outp)
         base = cv2.imread(outp_name, -1)
         overlay = cv2.imread(overlay_outp_name, -1)
-        # merged = base + overlay
         for c in range(0,3):
-            base[0:0+overlay.shape[0], 0:0+overlay.shape[1], c] = overlay[:,:,c] * (overlay[:,:,3]/255.0) +  base[0:0+overlay.shape[0], 0:0+overlay.shape[1], c] * (1.0 - overlay[:,:,3]/255.0)
+            zero = overlay.shape[0]
+            one = overlay.shape[1]
+            base[0:0+zero, 0:0+one, c] = overlay[:,:,c] * \
+                (overlay[:,:,3]/255.0) + base[0:0+zero, 0:0+one, c] * \
+                (1.0 - overlay[:,:,3]/255.0)
         cv2.imwrite(outp_name, base)
 
     ###########################################################################
