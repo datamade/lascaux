@@ -16,10 +16,10 @@ Optional Parameters
 
 The difference between ``overlay_tiles`` and ``base_tiles`` is that
 ``base_tiles`` will always be rendered on the bottom. This means that you
-should probably make sure that ``overlay_tiles`` has some kind of transparency.
+should probably make sure that ``overlay_tiles`` has transparency.
 
 Example:
-http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&source_url=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png
+http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&overlay_tiles=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png
 
 ### Making a request in python
 
@@ -29,7 +29,7 @@ http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom
               'center': [-87.69358, 41.786456],
               'dimensions': [3000, 5000],
               'zoom': 17,
-              'source_url': 'http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png'
+              'overlay_tiles': 'http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png'
             }
 >>> r = requests.get('http://lascaux.datamade.us', params=params)
 >>> with open('my_map.pdf', 'wb') as f:
