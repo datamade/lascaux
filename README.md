@@ -9,9 +9,9 @@ Parameters:
 * `center` - Latitude and longitude of map center
 * `dimensions` - Height and width of desired map in pixels
 * `zoom` - Zoom level resolution of map
-* `overlay_tiles` - Your map data tile layer in this format: `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`. *these tiles should support transparency*
 
-Optional Parameters
+Optional parameters:
+* `overlay_tiles` - Your map data tile layer in this format: `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`. *these tiles should support transparency*
 * `base_tiles` By default, we use some standard [base tiles from MapBox](https://a.tiles.mapbox.com/v4/datamade.hnmob3j3/page.html?access_token=pk.eyJ1IjoiZGF0YW1hZGUiLCJhIjoiaXhhVGNrayJ9.0yaccougI3vSAnrKaB00vA#3/0.00/0.00). If you want to provide your own, however, you can do so by providing an encoded URL to your own tile layer. Expects the same format as `overlay_tiles`
 
 Here's what our base tiles look like:
