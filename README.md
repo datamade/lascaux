@@ -6,20 +6,31 @@ Web API for printing high resolution PDF maps.
 Lascaux works by passing in a link to a set of [map tiles](https://www.mapbox.com/foundations/how-web-maps-work/) (similar to how [Leaflet](http://leafletjs.com/) loads in [TileLayers](http://leafletjs.com/reference.html#tilelayer)) and returning a high resolution PDF for printing. You can also set the map center, zoom level and size of your desired PDF.
 
 Parameters:
-* `center` - latitude and longitude of map center
-* `dimensions` - height and width of desired map in pixels
-* `zoom` - soom level resolution of map
+* `center` - Latitude and longitude of map center
+* `dimensions` - Height and width of desired map in pixels
+* `zoom` - Zoom level resolution of map
+* `overlay_tiles` - Your map data tile layer in this format: `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`. *these tiles should support transparency*
 
 Optional Parameters
-* `overlay_tiles` - encoded URL to a tile layer in the format `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`
-* `base_tiles` - encoded URL to a tile layer in the format `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`
+* `base_tiles` By default, we use some standard [base tiles from MapBox](https://a.tiles.mapbox.com/v4/datamade.hnmob3j3/page.html?access_token=pk.eyJ1IjoiZGF0YW1hZGUiLCJhIjoiaXhhVGNrayJ9.0yaccougI3vSAnrKaB00vA#3/0.00/0.00). If you want to provide your own, however, you can do so by providing an encoded URL to your own tile layer. Expects the same format as `overlay_tiles`
 
-The difference between ``overlay_tiles`` and ``base_tiles`` is that
-``base_tiles`` will always be rendered on the bottom. This means that you
-should probably make sure that ``overlay_tiles`` has transparency.
+Here's what our base tiles look like:
 
-Example:
+![lascaux base tiles](https://raw.githubusercontent.com/datamade/lascaux/master/media/base-tiles.png)
+
+#### Basic example
+Map of vacant properties around S 55th and W California on Chicago's South Side provided by [LocalData](http://localdata.com/) and [Southwest Organizing Project](http://www.swopchicago.org):
+
 http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&overlay_tiles=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png
+
+[![lascaux demo](https://raw.githubusercontent.com/datamade/lascaux/master/media/lascaux-demo.png)](http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&overlay_tiles=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png)
+
+#### Custom `base_tiles` example
+You can pass in your own `base_tiles` if you don't like ours. Here's the same LocalData map with [Stamen's Toner base tiles](http://maps.stamen.com/toner/#12/37.7706/-122.3782):
+
+http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&overlay_tiles=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png&base_tiles=http://d.tile.stamen.com/toner/{z}/{x}/{y}.png
+
+[![Stamen Toner tiles](https://raw.githubusercontent.com/datamade/lascaux/master/media/stamen-base.png)](http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=3000,5000&zoom=17&overlay_tiles=http%3A%2F%2Flocaldata-tiles.herokuapp.com%2F06a311f0-4b1a-11e3-aca4-1bb74719513f%2Ffilter%2FIs-property-vacant%2FYes%2Ftiles%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png)
 
 ### Making a request in python
 
