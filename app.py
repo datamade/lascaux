@@ -17,26 +17,28 @@ app.url_map.strict_slashes = False
 def print_page():
     zoom = request.args.get('zoom')
     center = request.args.get('center')
-    if not zoom or not center:
+    if not center:
         r = {
             'status': 'error',
-            'message': "'zoom', and 'center' are required parameters"
+            'message': "'center' is a required parameter"
         }
         resp = make_response(json.dumps(r), 400)
         resp.headers['content-type'] = 'application/json'
         return resp
+    page_size = (1275,1650,5,7,)
     print_data = {
         'dimensions': request.args.get('dimensions'),
-        'zoom': request.args.get('zoom', 17),
+        'zoom': request.args.get('zoom', 15),
         'center': request.args['center'].split(','),
     }
-    page_size = None
     if print_data.get('dimensions'):
         print_data['dimensions'] = print_data['dimensions'].split(',')
         short_side, long_side = sorted(print_data['dimensions'])
         tiles_across = math.ceil(float(short_side) / 256.0)
         tiles_up = math.ceil(float(long_side) / 256.0)
         page_size = (int(short_side), int(long_side), int(tiles_across), int(tiles_up),)
+    else:
+        print_data['dimensions'] = page_size[:2]
     if request.args.get('overlay_tiles'):
         print_data['overlay_tiles'] = request.args['overlay_tiles']
     if request.args.get('base_tiles'):
