@@ -6,9 +6,9 @@ Web API for printing high resolution PDF maps.
 Lascaux works by passing in a link to a set of [map tiles](https://www.mapbox.com/foundations/how-web-maps-work/) (similar to how [Leaflet](http://leafletjs.com/) loads in [TileLayers](http://leafletjs.com/reference.html#tilelayer)) and returning a high resolution PDF for printing. You can also set the map center, zoom level and size of your desired PDF.
 
 Parameters:
-* `center` - Latitude and longitude of map center
-* `dimensions` - Height and width of desired map in pixels
-* `zoom` - Zoom level resolution of map
+* `center` - Latitude,longitude of map center
+* `dimensions` - Height,width of desired map in pixels. Defaults to *1275,1650* (8.5" x 11" letter size). Another useful size is *2550,3300* (11" x 17" tabloid size)
+* `zoom` - Number indicating the zoom level from 1 (the whole world) to 20 (a city block). Defaults to 17.
 
 Optional parameters:
 * `overlay_tiles` - Your map data tile layer in this format: `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`. *these tiles should support transparency*
