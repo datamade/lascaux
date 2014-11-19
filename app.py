@@ -15,30 +15,32 @@ app.url_map.strict_slashes = False
 
 @app.route('/', methods=['GET'])
 def print_page():
-    dimensions = request.args.getlist('dimensions')
     zoom = request.args.get('zoom')
     center = request.args.get('center')
-    if not dimensions or not zoom or not center:
+    if not zoom or not center:
         r = {
             'status': 'error',
-            'message': "'dimensions', 'zoom', and 'center' are required parameters"
+            'message': "'zoom', and 'center' are required parameters"
         }
         resp = make_response(json.dumps(r), 400)
         resp.headers['content-type'] = 'application/json'
         return resp
     print_data = {
-        'dimensions': request.args['dimensions'].split(','),
-        'zoom': request.args['zoom'],
+        'dimensions': request.args.get('dimensions'),
+        'zoom': request.args.get('zoom', 17),
         'center': request.args['center'].split(','),
     }
+    page_size = None
+    if print_data.get('dimensions'):
+        print_data['dimensions'] = print_data['dimensions'].split(',')
+        short_side, long_side = sorted(print_data['dimensions'])
+        tiles_across = math.ceil(float(short_side) / 256.0)
+        tiles_up = math.ceil(float(long_side) / 256.0)
+        page_size = (int(short_side), int(long_side), int(tiles_across), int(tiles_up),)
     if request.args.get('overlay_tiles'):
         print_data['overlay_tiles'] = request.args['overlay_tiles']
     if request.args.get('base_tiles'):
         print_data['base_tiles'] = request.args['base_tiles']
-    short_side, long_side = sorted(print_data['dimensions'])
-    tiles_across = math.ceil(float(short_side) / 256.0)
-    tiles_up = math.ceil(float(long_side) / 256.0)
-    page_size = (int(short_side), int(long_side), int(tiles_across), int(tiles_up),)
     path = pdfer(print_data, page_size=page_size)
     resp = make_response(open(path, 'rb').read())
     resp.headers['Content-Type'] = 'application/pdf'
