@@ -24,7 +24,7 @@ def dl_write(*args):
     return name
 
 def dl_write_all(links, base_name):
-    pool = Pool(processes=10)
+    pool = Pool(processes=4)
     args = [(l, base_name,) for l in links]
     names = pool.map(dl_write, args)
     pool.close()
