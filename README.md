@@ -18,6 +18,12 @@ Here's what our base tiles look like:
 
 ![lascaux base tiles](https://raw.githubusercontent.com/datamade/lascaux/master/media/base-tiles.png)
 
+Here's some other `base_tiles` that are good for printing:
+
+* [Toner, by Stamen](http://maps.stamen.com/#toner/12/37.7706/-122.3782) `http://d.tile.stamen.com/toner/{z}/{x}/{y}.png`
+* [Terrain, by Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782) `http://c.tile.stamen.com/terrain/{z}/{x}/{y}.jpg`
+* [Sattelite by MapBox](https://a.tiles.mapbox.com/v4/datamade.k92mcmc8/page.html?access_token=pk.eyJ1IjoiZGF0YW1hZGUiLCJhIjoiaXhhVGNrayJ9.0yaccougI3vSAnrKaB00vA#3/44.47/-100.81) `http://a.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png`
+
 #### Basic example
 Here's an 11" x 17" map of vacant properties around S 55th and W California on Chicago's South Side provided by [LocalData](http://localdata.com/) and [Southwest Organizing Project](http://www.swopchicago.org):
 
