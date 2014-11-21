@@ -19,6 +19,9 @@ Here's what the default MapBox street `base_tiles` look like:
 
 Here's some other `base_tiles` that are good for printing:
 
+[Open Street Map](http://www.openstreetmap.org/#map=13/41.8846/-87.6822) (includes building addresses) `http://b.tile.openstreetmap.org/{z}/{x}/{y}.png`
+![Open Street Map](https://raw.githubusercontent.com/datamade/lascaux/master/media/openstreetmap-tiles.png)
+
 [Toner, by Stamen](http://maps.stamen.com/#toner/12/37.7706/-122.3782) `http://d.tile.stamen.com/toner/{z}/{x}/{y}.png`
 ![Toner, by Stamen](https://raw.githubusercontent.com/datamade/lascaux/master/media/stamen-toner-tiles.png)
 
