@@ -19,16 +19,28 @@ Here's what the default MapBox street `base_tiles` look like:
 
 Here's some other `base_tiles` that are good for printing:
 
-[Open Street Map](http://www.openstreetmap.org/#map=13/41.8846/-87.6822) (includes building addresses for zoom 17 and above) `http://b.tile.openstreetmap.org/{z}/{x}/{y}.png`
+[Open Street Map](http://www.openstreetmap.org/#map=13/41.8846/-87.6822) (includes building addresses for zoom 17 and above) 
+
+`http://b.tile.openstreetmap.org/{z}/{x}/{y}.png`
+
 ![Open Street Map](https://raw.githubusercontent.com/datamade/lascaux/master/media/openstreetmap-tiles.png)
 
-[Toner, by Stamen](http://maps.stamen.com/#toner/12/37.7706/-122.3782) `http://d.tile.stamen.com/toner/{z}/{x}/{y}.png`
+[Toner, by Stamen](http://maps.stamen.com/#toner/12/37.7706/-122.3782) 
+
+`http://d.tile.stamen.com/toner/{z}/{x}/{y}.png`
+
 ![Toner, by Stamen](https://raw.githubusercontent.com/datamade/lascaux/master/media/stamen-toner-tiles.png)
 
-[Terrain, by Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782) `http://c.tile.stamen.com/terrain/{z}/{x}/{y}.jpg`
+[Terrain, by Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782) 
+
+`http://c.tile.stamen.com/terrain/{z}/{x}/{y}.jpg`
+
 ![Terrain, by Stamen](https://raw.githubusercontent.com/datamade/lascaux/master/media/stamen-terrain-tiles.png)
 
-[Sattelite by MapBox](https://a.tiles.mapbox.com/v4/datamade.k92mcmc8/page.html?access_token=pk.eyJ1IjoiZGF0YW1hZGUiLCJhIjoiaXhhVGNrayJ9.0yaccougI3vSAnrKaB00vA#3/44.47/-100.81) `http://a.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png`
+[Sattelite by MapBox](https://a.tiles.mapbox.com/v4/datamade.k92mcmc8/page.html?access_token=pk.eyJ1IjoiZGF0YW1hZGUiLCJhIjoiaXhhVGNrayJ9.0yaccougI3vSAnrKaB00vA#3/44.47/-100.81) 
+
+`http://a.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png`
+
 ![Sattelite by MapBox](https://raw.githubusercontent.com/datamade/lascaux/master/media/mapbox-sattelite-tiles.png)
 
 #### Basic example
