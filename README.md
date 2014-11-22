@@ -12,18 +12,19 @@ Parameters:
 
 Optional parameters:
 * `overlay_tiles` - Your map data tile layer in this format: `http://{s}.somedomain.com/blabla/{z}/{x}/{y}.png`. *these tiles should support transparency*
-* `base_tiles` By default, we use some standard [street tiles from MapBox](https://a.tiles.mapbox.com/v4/datamade.hnmob3j3/page.html?access_token=pk.eyJ1IjoiZGF0YW1hZGUiLCJhIjoiaXhhVGNrayJ9.0yaccougI3vSAnrKaB00vA#3/0.00/0.00). If you want to provide your own, however, you can do so by providing an encoded URL to your own tile layer. Expects the same format as `overlay_tiles`
+* `base_tiles` By default, we use tiles from [Open Street Map](http://www.openstreetmap.org/#map=13/41.8846/-87.6822). If you want to provide your own, however, you can do so by providing an encoded URL to your own tile layer. Expects the same format as `overlay_tiles`
 
-Here's what the default MapBox street `base_tiles` look like:
-![MapBox street tiles](https://raw.githubusercontent.com/datamade/lascaux/master/media/base-tiles.png)
+We use Open Street Map tiles because they show building addresses for zoom 17 and above. Here's what they look like:
+
+![Open Street Map](https://raw.githubusercontent.com/datamade/lascaux/master/media/openstreetmap-tiles.png)
 
 Here's some other `base_tiles` that are good for printing:
 
-[Open Street Map](http://www.openstreetmap.org/#map=13/41.8846/-87.6822) (includes building addresses for zoom 17 and above) 
+[MapBox streets](https://a.tiles.mapbox.com/v4/datamade.hnmob3j3/page.html?access_token=pk.eyJ1IjoiZGF0YW1hZGUiLCJhIjoiaXhhVGNrayJ9.0yaccougI3vSAnrKaB00vA#3/0.00/0.00) 
 
-`http://b.tile.openstreetmap.org/{z}/{x}/{y}.png`
+`https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png`
 
-![Open Street Map](https://raw.githubusercontent.com/datamade/lascaux/master/media/openstreetmap-tiles.png)
+![Mapbox streets](https://raw.githubusercontent.com/datamade/lascaux/master/media/base-tiles.png)
 
 [Toner, by Stamen](http://maps.stamen.com/#toner/12/37.7706/-122.3782) 
 
