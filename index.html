@@ -32,30 +32,71 @@
           Lascaux
           <small>Print high resolution maps from the web</small>
         </h1>
+        <hr />
+        <p>Configure your map below:</p>
 
-        <form role="form">
+        <form role="form" class="form-horizontal">
           <div class="form-group">
-            <label for="overlay_tiles">Data source</label>
-            <input type="email" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
-            <p class="help-block">URL to a TileJson source.</p>
+            <label for="overlay_tiles" class="col-sm-2 control-label">Data source</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
+              <p class="help-block">URL to a TileJSON source.</p>
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="radio-inline">
-              <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> Open Street Map
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> Streets by MapBox
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> Satellite by MapBox 
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> Toner by Stamen
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> Terrain by Stamen
-            </label>
+            <label class="col-sm-2 control-label">Base map</label>
+            <div class="col-sm-10">
+              <div class="radio">
+                <label>
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" checked="checked"> Open Street Map
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png"> Streets by MapBox
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png"> Satellite by MapBox 
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png"> Toner by Stamen
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"> Terrain by Stamen
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="dimensions" class="col-sm-2 control-label">Size</label>
+            <div class="col-sm-10">
+              <select class="form-control" id="dimensions">
+                <option>Letter (8 1/2" by 11")</option>
+                <option>Tabloid (11" x 17")</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="zoom" class="col-sm-2 control-label">Zoom</label>
+            <div class="col-sm-10">
+              <input type="number" class="form-control" value="17" id="zoom" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="latitude" class="col-sm-2 control-label">Map center</label>
+            <div class="col-sm-5">
+              <input type="text" class="form-control" id="latitude" placeholder="41.879087">
+            </div>
+            <div class="col-sm-5">
+              <input type="text" class="form-control" id="longitude" placeholder="-87.69358">
+            </div>
           </div>
           <p>
             <button type="submit" class="btn btn-default">Get my map!</button>
