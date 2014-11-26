@@ -49,27 +49,27 @@
             <div class="col-sm-10">
               <div class="radio">
                 <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" checked="checked"> Open Street Map
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://a.tile.openstreetmap.org/{z}/{x}/{y}.png" checked="checked"> Open Street Map
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png"> Streets by MapBox
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png"> Streets by MapBox
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png"> Satellite by MapBox 
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://a.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png"> Satellite by MapBox 
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png"> Toner by Stamen
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://a.tile.stamen.com/toner/{z}/{x}/{y}.png"> Toner by Stamen
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"> Terrain by Stamen
+                  <input type="radio" name="base_tiles_option" id="base_tiles" value="http://a.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"> Terrain by Stamen
                 </label>
               </div>
             </div>
@@ -92,12 +92,12 @@
           <div class="form-group">
             <label for="center" class="col-sm-2 control-label">Map center</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="center" placeholder="41.879087,-87.69358">
+              <input type="text" class="form-control" id="center" placeholder="-87.757833,41.879087">
             </div>
           </div>
           <div class="form-group">
             <div class='col-sm-5 col-sm-offset-2'>
-              <button type="submit" class="btn btn-info btn-lg">Get my map!</button>
+              <button id="submit-download" type="submit" class="btn btn-info btn-lg">Download PDF</button>
             </div>
           </div>
         </form>
@@ -115,10 +115,29 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/moment.min.js"></script>
     <script src="/js/leaflet.js?1"></script>
-    <script src="/static/js/analytics_lib.js"></script>
+    <!-- <script src="/static/js/analytics_lib.js"></script> -->
 
     <script>
+      $(function() {
 
+        $("#submit-download").on("click", function(e){
+          e.preventDefault();
+
+          var params = {
+            overlay_tiles: $("#overlay_tiles").val(),
+            base_tiles: $("#base_tiles").val(),
+            dimensions: $("#dimensions").val(),
+            zoom: $("#zoom").val(),
+            center: $("#center").val()
+          }
+
+          // console.log(params);
+          // console.log($.param(params))
+
+          var download_url = "http://lascaux.datamade.us/?" + $.param(params)
+          window.open(download_url)
+        });
+      });
     </script>
 
   </body>
