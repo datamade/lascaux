@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Lascaux</title>
+    <title>Lascaux - Print high resolution maps from the web</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.simplex.min.css" rel="stylesheet">
@@ -40,7 +40,7 @@
             <label for="overlay_tiles" class="col-sm-2 control-label">Data source</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
-              <p class="help-block">URL to a TileJSON source.</p>
+              <p class="help-block">URL to a TileJSON source</p>
             </div>
           </div>
 
@@ -76,31 +76,30 @@
           </div>
           <div class="form-group">
             <label for="dimensions" class="col-sm-2 control-label">Size</label>
-            <div class="col-sm-10">
+            <div class="col-sm-3">
               <select class="form-control" id="dimensions">
-                <option>Letter (8 1/2" by 11")</option>
-                <option>Tabloid (11" x 17")</option>
+                <option value='1275,1650'>Letter 8 1/2" by 11"</option>
+                <option value='2550,3300'>Tabloid 11" x 17"</option>
               </select>
             </div>
           </div>
           <div class="form-group">
             <label for="zoom" class="col-sm-2 control-label">Zoom</label>
-            <div class="col-sm-10">
+            <div class="col-sm-2">
               <input type="number" class="form-control" value="17" id="zoom" />
             </div>
           </div>
           <div class="form-group">
-            <label for="latitude" class="col-sm-2 control-label">Map center</label>
-            <div class="col-sm-5">
-              <input type="text" class="form-control" id="latitude" placeholder="41.879087">
-            </div>
-            <div class="col-sm-5">
-              <input type="text" class="form-control" id="longitude" placeholder="-87.69358">
+            <label for="center" class="col-sm-2 control-label">Map center</label>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" id="center" placeholder="41.879087,-87.69358">
             </div>
           </div>
-          <p>
-            <button type="submit" class="btn btn-default">Get my map!</button>
-          </p>
+          <div class="form-group">
+            <div class='col-sm-5 col-sm-offset-2'>
+              <button type="submit" class="btn btn-info btn-lg">Get my map!</button>
+            </div>
+          </div>
         </form>
 
         <div class="footer">
@@ -117,6 +116,10 @@
     <script src="/js/moment.min.js"></script>
     <script src="/js/leaflet.js?1"></script>
     <script src="/static/js/analytics_lib.js"></script>
+
+    <script>
+
+    </script>
 
   </body>
 </html>
