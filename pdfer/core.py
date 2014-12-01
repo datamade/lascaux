@@ -44,7 +44,7 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
     max_tile_y = min_tile_y + tiles_up
 
     # Get base layer tiles
-    base_pattern = 'http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png'
+    base_pattern = 'http://b.tile.openstreetmap.org/{z}/{x}/{y}.png'
     if data.get('base_tiles'):
         base_pattern = data['base_tiles']
     base_links = generateLinks(base_pattern, 
