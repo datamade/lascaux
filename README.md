@@ -16,7 +16,7 @@ Optional parameters:
 
 We use Open Street Map tiles because they show building addresses for zoom 17 and above. Here's what they look like:
 
-![Open Street Map](https://raw.githubusercontent.com/datamade/lascaux/master/images/openstreetmap-tiles.png)
+![Open Street Map](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/openstreetmap-tiles.png)
 
 Here's some other `base_tiles` that are good for printing:
 
@@ -24,39 +24,39 @@ Here's some other `base_tiles` that are good for printing:
 
 `https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png`
 
-![Mapbox streets](https://raw.githubusercontent.com/datamade/lascaux/master/images/mapbox-streets-tiles.png)
+![Mapbox streets](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/mapbox-streets-tiles.png)
 
 [Toner, by Stamen](http://maps.stamen.com/#toner/12/37.7706/-122.3782) 
 
 `http://d.tile.stamen.com/toner/{z}/{x}/{y}.png`
 
-![Toner, by Stamen](https://raw.githubusercontent.com/datamade/lascaux/master/images/stamen-toner-tiles.png)
+![Toner, by Stamen](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/stamen-toner-tiles.png)
 
 [Terrain, by Stamen](http://maps.stamen.com/#terrain/12/37.7706/-122.3782) 
 
 `http://c.tile.stamen.com/terrain/{z}/{x}/{y}.jpg`
 
-![Terrain, by Stamen](https://raw.githubusercontent.com/datamade/lascaux/master/images/stamen-terrain-tiles.png)
+![Terrain, by Stamen](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/stamen-terrain-tiles.png)
 
 [Satellite by MapBox](https://a.tiles.mapbox.com/v4/datamade.k92mcmc8/page.html?access_token=pk.eyJ1IjoiZGF0YW1hZGUiLCJhIjoiaXhhVGNrayJ9.0yaccougI3vSAnrKaB00vA#3/44.47/-100.81) 
 
 `http://a.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png`
 
-![Satellite by MapBox](https://raw.githubusercontent.com/datamade/lascaux/master/images/mapbox-satellite-tiles.png)
+![Satellite by MapBox](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/mapbox-satellite-tiles.png)
 
 #### Basic example
 Here's an 11" x 17" map of vacant properties around S 55th and W California on Chicago's South Side provided by [LocalData](http://localdata.com/) and [Southwest Organizing Project](http://www.swopchicago.org):
 
 http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png
 
-[![lascaux demo](https://raw.githubusercontent.com/datamade/lascaux/master/images/lascaux-demo.png)](http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png)
+[![lascaux demo](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/lascaux-demo.png)](http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png)
 
 #### Custom `base_tiles` example
 You can pass in your own `base_tiles` if you don't like ours. Here's the same LocalData map with [Stamen's Toner base tiles](http://maps.stamen.com/toner/#12/37.7706/-122.3782):
 
 http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png&base_tiles=http://d.tile.stamen.com/toner/{z}/{x}/{y}.png
 
-[![Stamen Toner tiles](https://raw.githubusercontent.com/datamade/lascaux/master/images/stamen-base.png)](http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png&base_tiles=http://d.tile.stamen.com/toner/{z}/{x}/{y}.png)
+[![Stamen Toner tiles](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/stamen-base.png)](http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png&base_tiles=http://d.tile.stamen.com/toner/{z}/{x}/{y}.png)
 
 ### Making a request in python
 

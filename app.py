@@ -4,7 +4,7 @@ import json
 import math
 from pdfer.core import pdfer
 
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, render_template
 
 app = Flask(__name__)
 
@@ -14,13 +14,17 @@ app.url_map.strict_slashes = False
 # client will need to use JSON.stringify() or similar
 
 @app.route('/', methods=['GET'])
+def index():
+    return render_app_template('index.html')
+
+@app.route('/api', methods=['GET'])
 def print_page():
     zoom = request.args.get('zoom')
     center = request.args.get('center')
     if not center:
         r = {
             'status': 'error',
-            'message': "'center' is a required parameter"
+            'message': "Please provide parameters for 'base_tiles', 'dimensions', 'zoom' and 'center'."
         }
         resp = make_response(json.dumps(r), 400)
         resp.headers['content-type'] = 'application/json'
@@ -50,6 +54,14 @@ def print_page():
     resp.headers['Content-Disposition'] = 'attachment; filename=lascaux_%s.pdf' % now
     return resp
 
+# UTILITY
+def render_app_template(template, **kwargs):
+    '''Add some goodies to all templates.'''
+    if 'config' not in kwargs:
+        kwargs['config'] = app.config
+    return render_template(template, **kwargs)
+
+# INIT
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5002))
     app.run(host='0.0.0.0', port=port, debug=True)
