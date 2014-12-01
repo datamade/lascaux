@@ -47,16 +47,16 @@ Here's some other `base_tiles` that are good for printing:
 #### Basic example
 Here's an 11" x 17" map of vacant properties around S 55th and W California on Chicago's South Side provided by [LocalData](http://localdata.com/) and [Southwest Organizing Project](http://www.swopchicago.org):
 
-http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png
+http://lascaux.datamade.us/api?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png
 
-[![lascaux demo](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/lascaux-demo.png)](http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png)
+[![lascaux demo](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/lascaux-demo.png)](http://lascaux.datamade.us/api?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png)
 
 #### Custom `base_tiles` example
 You can pass in your own `base_tiles` if you don't like ours. Here's the same LocalData map with [Stamen's Toner base tiles](http://maps.stamen.com/toner/#12/37.7706/-122.3782):
 
-http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png&base_tiles=http://d.tile.stamen.com/toner/{z}/{x}/{y}.png
+http://lascaux.datamade.us/api?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png&base_tiles=http://d.tile.stamen.com/toner/{z}/{x}/{y}.png
 
-[![Stamen Toner tiles](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/stamen-base.png)](http://lascaux.datamade.us/?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png&base_tiles=http://d.tile.stamen.com/toner/{z}/{x}/{y}.png)
+[![Stamen Toner tiles](https://raw.githubusercontent.com/datamade/lascaux/master/static/images/stamen-base.png)](http://lascaux.datamade.us/api?center=-87.69358,41.786456&dimensions=2550,3300&zoom=17&overlay_tiles=http://localdata-tiles.herokuapp.com/06a311f0-4b1a-11e3-aca4-1bb74719513f/filter/Is-property-vacant/Yes/tiles/{z}/{x}/{y}.png&base_tiles=http://d.tile.stamen.com/toner/{z}/{x}/{y}.png)
 
 ### Making a request in python
 
