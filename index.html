@@ -37,41 +37,16 @@
 
         <form role="form" class="form-horizontal">
           <div class="form-group">
+            <label class="col-sm-2 control-label">Base map</label>
+            <div class="col-sm-10">
+              <div id="base_tiles_list"></div>
+            </div>
+          </div>
+          <div class="form-group">
             <label for="overlay_tiles" class="col-sm-2 control-label">Data source</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
               <p class="help-block">URL to a TileJSON source</p>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Base map</label>
-            <div class="col-sm-10">
-              <div class="radio">
-                <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles_1" value="http://a.tile.openstreetmap.org/{z}/{x}/{y}.png" checked="checked"> Open Street Map
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles_2" value="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png"> Streets by MapBox
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles_3" value="http://a.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png"> Satellite by MapBox 
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles_4" value="http://a.tile.stamen.com/toner/{z}/{x}/{y}.png"> Toner by Stamen
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input type="radio" name="base_tiles_option" id="base_tiles_5" value="http://a.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"> Terrain by Stamen
-                </label>
-              </div>
             </div>
           </div>
           <div class="form-group">
@@ -88,22 +63,27 @@
             <div class="col-sm-2">
               <input type="number" class="form-control" value="17" id="zoom" />
             </div>
+            <p class="help-block">Higher numbers are more zoomed in</p>
           </div>
           <div class="form-group">
             <label for="center" class="col-sm-2 control-label">Map center</label>
             <div class="col-sm-3">
               <input type="text" class="form-control" id="center" placeholder="-87.757833,41.879087">
             </div>
+            <p class="help-block">Longitude, Latitude</p>
           </div>
           <div class="form-group">
-            <div class='col-sm-5 col-sm-offset-2'>
-              <button id="submit-download" type="submit" class="btn btn-info btn-lg">Download PDF</button>
+            <div class='col-sm-3 col-sm-offset-2'>
+              <button id="submit-download" type="submit" class="btn btn-info btn-lg">
+                <i class='fa fa-download'></i>
+                Download PDF
+              </button>
             </div>
           </div>
         </form>
 
         <div class="footer">
-          <p>&copy; <a href='http://datamade.us'>DataMade</a> and <a href='http://lisc-chicago.org'>LISC Chicago</a> | <a href='https://github.com/datamade/lascaux'><i class='icon-github'></i> Pull requests welcome!</a></p>
+          <p class='pull-right'>&copy; <a href='http://datamade.us'>DataMade</a> and <a href='http://lisc-chicago.org'>LISC Chicago</a> | <a href='https://github.com/datamade/lascaux'><i class='icon-github'></i> Pull requests welcome!</a></p>
         </div>
       </div>
     </div> <!-- /container -->
@@ -119,6 +99,47 @@
 
     <script>
       $(function() {
+
+        var base_tile_sources = [
+          {
+            name: 'Open Street Map', 
+            url: 'http://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            image: '/images/openstreetmap-tiles.png'
+          },
+          {
+            name: 'Streets by MapBox', 
+            url: 'http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png',
+            image: '/images/mapbox-streets-tiles.png'
+          },
+          {
+            name: 'Satellite by MapBox', 
+            url: 'http://a.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png',
+            image: '/images/mapbox-satellite-tiles.png'
+          },
+          {
+            name: 'Toner by Stamen', 
+            url: 'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png',
+            image: '/images/stamen-toner-tiles.png'
+          },
+          {
+            name: 'Terrain by Stamen', 
+            url: 'http://a.tile.stamen.com/terrain/{z}/{x}/{y}.png',
+            image: '/images/stamen-terrain-tiles.png'
+          }
+        ];
+
+        $.each(base_tile_sources, function(k, v){
+          $("#base_tiles_list").append('\
+            <div class="radio col-sm-5">\
+                <label>\
+                  <input type="radio" name="base_tiles_option" id="base_tiles_' + k + '" \
+                    value="' + v.url + '" checked="checked"> ' + v.name + ' \
+                    <br /><img src="' + v.image + '" class="img-responsive img-thumbnail" alt="' + v.name + '" />\
+                </label>\
+              </div>');
+        });
+
+        $('#base_tiles_0').prop("checked", true)
 
         $("#submit-download").on("click", function(e){
           e.preventDefault();
