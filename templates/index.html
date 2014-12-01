@@ -167,13 +167,12 @@
         // click listener for download PDF button
         $("#submit-download").on("click", function(e){
           e.preventDefault();
-          var center = $('#center').val()
           var params = {
             overlay_tiles: $("#overlay_tiles").val(),
             base_tiles: $("input:radio[name=base_tiles_option]:checked").val(),
             dimensions: $("#dimensions").val(),
             zoom: $("#zoom").val(),
-            center: [center.split(',')[1], center.split(',')[0]].join(',')
+            center: $('#center').val()
           }
 
           // console.log(params);
