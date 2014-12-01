@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 import cairocffi as cairo
 import os
+import random
 from helpers import dl_write_all, hex_to_rgb, get_pixel_coords
 from datetime import datetime
 from shapely.geometry import box, Polygon, MultiPolygon, Point
@@ -23,7 +24,12 @@ def generateLinks(pattern, *args):
     links = []
     for ty in range(min_tile_y, max_tile_y + 1):
         for tx in range(min_tile_x, max_tile_x + 1):
-            links.append(pattern.format(z=zoom, x=tx, y=ty))
+            
+            # handle {s} parameter in tile links for load balancing
+            if "{s}" in pattern:
+                links.append(pattern.format(s=random.choice(["a", "b", "c"]) , z=zoom, x=tx, y=ty))
+            else:
+                links.append(pattern.format(z=zoom, x=tx, y=ty))
     return links
 
 def pdfer(data, page_size=PAGE_SIZES['letter']):
@@ -44,9 +50,10 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
     max_tile_y = min_tile_y + tiles_up
 
     # Get base layer tiles
-    base_pattern = 'http://b.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    base_pattern = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     if data.get('base_tiles'):
         base_pattern = data['base_tiles']
+
     base_links = generateLinks(base_pattern, 
                                grid['zoom'], 
                                min_tile_x, 
