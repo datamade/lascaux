@@ -27,7 +27,7 @@ def generateLinks(pattern, *args):
             
             # handle {s} parameter in tile links for load balancing
             if "{s}" in pattern:
-                links.append(pattern.format(s=random.choice(["a", "b", "c"]) , z=zoom, x=tx, y=ty))
+                links.append(pattern.format(s=random.choice(["a", "b", "c"]), z=zoom, x=tx, y=ty))
             else:
                 links.append(pattern.format(z=zoom, x=tx, y=ty))
     return links
