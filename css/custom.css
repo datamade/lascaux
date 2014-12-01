@@ -5,6 +5,8 @@ body {
   font-size: 17px;
 }
 
+#map { height: 180px; margin-top: 5px;}
+
 .label {
   display: inline-block;
   white-space: normal;
