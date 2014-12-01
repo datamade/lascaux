@@ -103,27 +103,27 @@
         // init some stuff
         var base_tile_sources = [
           {
-            name: 'Open Street Map', 
+            name: 'Open Street Map',
             url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             image: '/static/images/openstreetmap-tiles.png'
           },
           {
-            name: 'Streets by MapBox', 
+            name: 'Streets by MapBox',
             url: 'http://{s}.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png',
             image: '/static/images/mapbox-streets-tiles.png'
           },
           {
-            name: 'Satellite by MapBox', 
+            name: 'Satellite by MapBox',
             url: 'http://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png',
             image: '/static/images/mapbox-satellite-tiles.png'
           },
           {
-            name: 'Toner by Stamen', 
+            name: 'Toner by Stamen',
             url: 'http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg',
             image: '/static/images/stamen-toner-tiles.png'
           },
           {
-            name: 'Terrain by Stamen', 
+            name: 'Terrain by Stamen',
             url: 'http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg',
             image: '/static/images/stamen-terrain-tiles.png'
           }
@@ -141,7 +141,7 @@
         });
 
         $('#base_tiles_0').prop("checked", true);
-        
+
         // init map
         var map = L.map('map', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 12);
         L.tileLayer('http://{s}.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png', {
@@ -167,19 +167,19 @@
         // click listener for download PDF button
         $("#submit-download").on("click", function(e){
           e.preventDefault();
-
+          var center = $('#center').val()
           var params = {
             overlay_tiles: $("#overlay_tiles").val(),
             base_tiles: $("input:radio[name=base_tiles_option]:checked").val(),
             dimensions: $("#dimensions").val(),
             zoom: $("#zoom").val(),
-            center: $("#center").val()
+            center: [center.split(',')[1], center.split(',')[0]].join(',')
           }
 
           // console.log(params);
           // console.log($.param(params))
 
-          var download_url = "http://lascaux.datamade.us/api?" + $.param(params)
+          var download_url = "/api?" + $.param(params)
           window.open(download_url)
         });
       });
