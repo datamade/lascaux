@@ -181,7 +181,7 @@
           // console.log($.param(params))
 
           var download_url = "/api?" + $.param(params)
-          $("#download-link").html("<br />Download link:<br />http://lascaux.datamade.us" + download_url)
+          $("#download-link").html("<br /><strong>Save this map</strong><br />http://lascaux.datamade.us" + download_url)
           window.open(download_url)
         });
       });
