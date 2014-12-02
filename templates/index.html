@@ -50,7 +50,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="dimensions" class="col-sm-2 control-label">Size</label>
+            <label for="dimensions" class="col-sm-2 control-label">Paper size</label>
             <div class="col-sm-3">
               <select class="form-control" id="dimensions">
                 <option value='1275,1650'>Letter 8 1/2" by 11"</option>
@@ -59,7 +59,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="zoom" class="col-sm-2 control-label">Zoom</label>
+            <label for="zoom" class="col-sm-2 control-label">Zoom level</label>
             <div class="col-sm-2">
               <input type="number" class="form-control" value="17" id="zoom" />
             </div>
@@ -181,7 +181,7 @@
           // console.log($.param(params))
 
           var download_url = "/api?" + $.param(params)
-          $("#download-link").html("Download link: http://lascaux.datamade.us" + download_url)
+          $("#download-link").html("<br />Download link:<br />http://lascaux.datamade.us" + download_url)
           window.open(download_url)
         });
       });
