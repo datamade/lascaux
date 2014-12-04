@@ -38,7 +38,12 @@
           <div class="form-group">
             <label for="overlay_tiles" class="col-sm-2 control-label">Data source</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
+              <div class='input-group'>
+                <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
+                <span class="input-group-btn">
+                  <a href='#' id='add_overlay_tiles' class='btn btn-info'><i class='fa fa-plus-circle'></i> Add to preview</a>
+                </span>
+              </div>
               <p class="help-block">URL to a TileJSON source</p>
             </div>
           </div>
@@ -85,6 +90,9 @@
 
     <script>
       var map;
+      var base_tiles = '';
+      var overlay_tiles;
+      var layers;
       $(function() {
 
         var mapbox_streets = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png', {
@@ -123,8 +131,9 @@
                       };
 
         stamen_toner.addTo(map);
+        base_tiles = stamen_toner._url;
 
-        L.control.layers(baseMaps, {}, { collapsed: false, autoZIndex: true }).addTo(map);
+        layers = L.control.layers(baseMaps, {}, { collapsed: false, autoZIndex: true }).addTo(map);
 
         // Add in a crosshair for the map
         var crosshairIcon = L.icon({
@@ -140,12 +149,28 @@
             crosshair.setLatLng(map.getCenter());
         });
 
+        map.on('baselayerchange', function(e) {
+          base_tiles = e.layer._url;
+        });
+
+        $("#add_overlay_tiles").on("click", function(e){
+          e.preventDefault();
+          if (overlay_tiles) {
+            overlay_tiles.removeLayer(map);
+            layers.removeLayer(overlay_tiles);
+          }
+
+          overlay_tiles = L.tileLayer($("#overlay_tiles").val(), { detectRetina: true });
+          layers.addOverlay(overlay_tiles, "Data source");
+          overlay_tiles.addTo(map);
+        });
+
         // click listener for download PDF button
         $("#submit-download").on("click", function(e){
           e.preventDefault();
           var params = {
             overlay_tiles: $("#overlay_tiles").val(),
-            // base_tiles: $("input:radio[name=base_tiles_option]:checked").val(),
+            base_tiles: base_tiles,
             dimensions: $("#dimensions").val(),
             zoom: map.getZoom(),
             center: map.getCenter().lng + "," + map.getCenter().lat
