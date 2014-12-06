@@ -26,7 +26,7 @@
 
   <body>
     <div class="container">
-      <div class='col-md-10 col-md-offset-1'>
+      <div class='col-md-12'>
 
         <h1>
           Lascaux
@@ -41,7 +41,7 @@
               <div class='input-group'>
                 <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
                 <span class="input-group-btn">
-                  <a href='#' id='add_overlay_tiles' class='btn btn-info'><i class='fa fa-plus-circle'></i> Add to preview</a>
+                  <a href='#' id='add_overlay_tiles' class='btn btn-info'><i class='fa fa-plus-circle'></i> Add</a>
                 </span>
               </div>
               <p class="help-block">URL to a TileJSON source</p>
@@ -63,10 +63,19 @@
             </div>
           </div>
           <div class="form-group">
+            <label for="center" class="col-sm-2 control-label">Print detail</label>
+            <div class="col-sm-4">
+              <div id="map_detail"></div>
+            </div>
+            <div class="col-sm-6">
+              <p>Your printed map will have this level of detail</p>
+            </div>
+          </div>
+          <div class="form-group">
             <div class='col-sm-10 col-sm-offset-2'>
               <button id="submit-download" type="submit" class="btn btn-success btn-lg">
                 <i class='fa fa-download'></i>
-                Download PDF
+                Download map
               </button>
               <span id="download-link"></span>
             </div>
@@ -86,12 +95,15 @@
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/moment.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="/static/js/L.Map.Sync.js"></script>
     <script src="/static/js/analytics_lib.js"></script>
 
     <script>
       var map;
+      var map_detail;
       var base_tiles = '';
       var overlay_tiles;
+      var overlay_tiles_detail;
       var layers;
       $(function() {
 
@@ -110,6 +122,10 @@
           detectRetina: true
         });
 
+        var stamen_toner2 = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
+          detectRetina: true
+        });
+
         var open_street_map = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
           detectRetina: true
@@ -117,6 +133,10 @@
 
         // init map
         map = L.map('map', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 12);
+        map_detail = L.map('map_detail', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 17);
+
+        map.sync(map_detail, {noInitialSync: true});
+        map_detail.sync(map, {noInitialSync: true});
         
         var baseMaps = {"Toner by Stamen": stamen_toner,
                         "Streets by Mapbox": mapbox_streets, 
@@ -125,6 +145,7 @@
                       };
 
         stamen_toner.addTo(map);
+        stamen_toner2.addTo(map_detail);
         base_tiles = stamen_toner._url;
 
         layers = L.control.layers(baseMaps, {}, { collapsed: false, autoZIndex: true }).addTo(map);
@@ -149,14 +170,23 @@
 
         $("#add_overlay_tiles").on("click", function(e){
           e.preventDefault();
-          if (overlay_tiles) {
-            overlay_tiles.removeLayer(map);
-            layers.removeLayer(overlay_tiles);
-          }
+          var load_tile_url = $("#overlay_tiles").val();
 
-          overlay_tiles = L.tileLayer($("#overlay_tiles").val(), { detectRetina: true });
-          layers.addOverlay(overlay_tiles, "Data source");
-          overlay_tiles.addTo(map);
+          if (load_tile_url) {
+            if (overlay_tiles) {
+              overlay_tiles.removeLayer(map);
+              layers.removeLayer(overlay_tiles);
+            }
+            if (overlay_tiles_detail) {
+              overlay_tiles_detail.removeLayer(map_detail);
+            }
+
+            overlay_tiles = L.tileLayer(load_tile_url, { detectRetina: true });
+            oeverlay_tiles_detail = L.tileLayer(load_tile_url, { detectRetina: true });
+            layers.addOverlay(overlay_tiles, "Data source");
+            overlay_tiles.addTo(map);
+            overlay_tiles_detail.addTo(map_detail);
+          }
         });
 
         // click listener for download PDF button
@@ -166,7 +196,7 @@
             overlay_tiles: $("#overlay_tiles").val(),
             base_tiles: base_tiles,
             dimensions: $("#dimensions").val(),
-            zoom: map.getZoom(),
+            zoom: map_detail.getZoom(),
             center: map.getCenter().lng + "," + map.getCenter().lat
           }
 

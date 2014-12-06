@@ -5,7 +5,8 @@ body {
   font-size: 17px;
 }
 
-#map { height: 600px; margin-top: 5px;}
+#map { height: 600px; }
+#map_detail { height: 200px; }
 
 .label {
   display: inline-block;
