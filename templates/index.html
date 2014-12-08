@@ -68,7 +68,7 @@
               <div id="map_detail"></div>
             </div>
             <div class="col-sm-6">
-              <p>Your printed map will have this level of detail</p>
+              <p>Your map will print at this level of detail. Change the zoom level of this map to adjust your map zoom level.</p>
             </div>
           </div>
           <div class="form-group">
@@ -95,7 +95,6 @@
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/moment.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-    <script src="/static/js/L.Map.Sync.js"></script>
     <script src="/static/js/analytics_lib.js"></script>
 
     <script>
@@ -133,10 +132,14 @@
 
         // init map
         map = L.map('map', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 12);
-        map_detail = L.map('map_detail', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 17);
 
-        map.sync(map_detail, {noInitialSync: true});
-        map_detail.sync(map, {noInitialSync: true});
+        map_detail_options = {
+          scrollWheelZoom: false,
+          dragging: false,
+          touchZoom: false,
+          doubleClickZoom: false
+        }
+        map_detail = L.map('map_detail', map_detail_options).setView([41.87467,-87.62627], 17);
         
         var baseMaps = {"Toner by Stamen": stamen_toner,
                         "Streets by Mapbox": mapbox_streets, 
@@ -162,6 +165,7 @@
         // Move the crosshair to the center of the map when the user pans
         map.on('move', function(e) {
             crosshair.setLatLng(map.getCenter());
+            map_detail.setView(map.getCenter(), 17);
         });
 
         map.on('baselayerchange', function(e) {
@@ -182,10 +186,10 @@
             }
 
             overlay_tiles = L.tileLayer(load_tile_url, { detectRetina: true });
-            oeverlay_tiles_detail = L.tileLayer(load_tile_url, { detectRetina: true });
+            overlay_tiles_detail = L.tileLayer(load_tile_url, { detectRetina: true });
             layers.addOverlay(overlay_tiles, "Data source");
             overlay_tiles.addTo(map);
-            overlay_tiles_detail.addTo(map_detail);
+            overlay_tiles_detail.addTo(map_detail, {autoZIndex: true} );
           }
         });
 
