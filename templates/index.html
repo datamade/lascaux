@@ -101,34 +101,25 @@
       var map;
       var map_detail;
       var base_tiles = '';
+      var base_tiles_detail;
       var overlay_tiles;
       var overlay_tiles_detail;
       var layers;
       $(function() {
 
-        var mapbox_streets = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png', {
-          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-          detectRetina: true
-        });
+        var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
 
-        var mapbox_satellite = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png', {
-          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-          detectRetina: true
-        });
+        var mapbox_streets = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png', 
+          { attribution: attribution, detectRetina: true });
 
-        var stamen_toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
-          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-          detectRetina: true
-        });
+        var mapbox_satellite = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png', 
+          { attribution: attribution, detectRetina: true });
 
-        var stamen_toner2 = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
-          detectRetina: true
-        });
+        var stamen_toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', 
+          { attribution: attribution, detectRetina: true });
 
-        var open_street_map = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-          detectRetina: true
-        });
+        var open_street_map = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+          { attribution: attribution, detectRetina: true });
 
         // init map
         map = L.map('map', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 12);
@@ -148,7 +139,10 @@
                       };
 
         stamen_toner.addTo(map);
-        stamen_toner2.addTo(map_detail);
+
+        base_tiles_detail = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', 
+          { attribution: attribution, detectRetina: true });
+        base_tiles_detail.addTo(map_detail);
         base_tiles = stamen_toner._url;
 
         layers = L.control.layers(baseMaps, {}, { collapsed: false, autoZIndex: true }).addTo(map);
@@ -170,6 +164,10 @@
 
         map.on('baselayerchange', function(e) {
           base_tiles = e.layer._url;
+
+          if (base_tiles_detail) {
+            base_tiles_detail.setUrl(e.layer._url);
+          }
         });
 
         $("#add_overlay_tiles").on("click", function(e){
