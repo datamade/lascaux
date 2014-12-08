@@ -22,6 +22,7 @@
     <![endif]-->
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link rel="stylesheet" href="/static/css/leaflet-areaselect.css" />
   </head>
 
   <body>
@@ -95,6 +96,7 @@
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/moment.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="/static/js/leaflet-areaselect.js"></script>
     <script src="/static/js/analytics_lib.js"></script>
 
     <script>
@@ -105,6 +107,27 @@
       var overlay_tiles;
       var overlay_tiles_detail;
       var layers;
+      var area_select;
+
+      function getPrintBoxSize() {
+        // calculations made assuming zoom level 17
+        var detail_zoom_offset = map_detail.getZoom() - 17;
+        var map_zoom = map.getZoom() - detail_zoom_offset;
+
+        var width = Math.pow(2, map_zoom) * 0.009765625;
+        var height = Math.pow(2, map_zoom) * 0.013671875;
+
+        return [width, height]
+      }
+
+      function updatePrintBox() {
+        if (area_select) 
+          area_select.remove();
+        
+        area_select = L.areaSelect({ width:getPrintBoxSize()[0], height:getPrintBoxSize()[1], keepAspectRatio: true });
+        area_select.addTo(map);
+      }
+
       $(function() {
 
         var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
@@ -122,7 +145,7 @@
           { attribution: attribution, detectRetina: true });
 
         // init map
-        map = L.map('map', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 12);
+        map = L.map('map', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 13);
 
         map_detail_options = {
           scrollWheelZoom: false,
@@ -155,6 +178,7 @@
         });
         crosshair = new L.marker(map.getCenter(), {icon: crosshairIcon, clickable:false});
         crosshair.addTo(map);
+        updatePrintBox();
 
         // Move the crosshair to the center of the map when the user pans
         map.on('move', function(e) {
@@ -168,6 +192,14 @@
           if (base_tiles_detail) {
             base_tiles_detail.setUrl(e.layer._url);
           }
+        });
+
+        map.on('zoomend', function(e) {
+          updatePrintBox();
+        });
+
+        map_detail.on('zoomend', function(e) {
+          updatePrintBox();
         });
 
         $("#add_overlay_tiles").on("click", function(e){
