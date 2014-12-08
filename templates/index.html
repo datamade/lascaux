@@ -35,56 +35,49 @@
         </h1>
         <hr />
 
-        <form role="form" class="form-horizontal">
+        <form role="form">
           <div class="form-group">
-            <label for="overlay_tiles" class="col-sm-2 control-label">Data source</label>
-            <div class="col-sm-10">
-              <div class='input-group'>
-                <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
-                <span class="input-group-btn">
-                  <a href='#' id='add_overlay_tiles' class='btn btn-info'><i class='fa fa-plus-circle'></i> Add</a>
-                </span>
-              </div>
-              <p class="help-block">URL to a TileJSON source</p>
+            <label for="overlay_tiles" class="control-label">Data source</label>
+            <div class='input-group'>
+              <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
+              <span class="input-group-btn">
+                <a href='#' id='add_overlay_tiles' class='btn btn-info'><i class='fa fa-plus-circle'></i> Add</a>
+              </span>
             </div>
+            <p class="help-block">URL to a TileJSON source</p>
           </div>
           <div class="form-group">
-            <label for="dimensions" class="col-sm-2 control-label">Paper size</label>
-            <div class="col-sm-3">
-              <select class="form-control" id="dimensions">
-                <option value='1275,1650'>Letter 8 1/2" by 11"</option>
-                <option value='2550,3300'>Tabloid 11" x 17"</option>
-              </select>
-            </div>
+            <label for="dimensions" class="control-label">Paper size</label>
+            <select class="form-control" id="dimensions">
+              <option value='1275,1650'>Letter 8 1/2" by 11"</option>
+              <option value='2550,3300'>Tabloid 11" x 17"</option>
+            </select>
           </div>
           <div class="form-group">
-            <label for="center" class="col-sm-2 control-label">Preview</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
+              <h4>Select area</h4>
               <div id="map"></div>
             </div>
-          </div>
-          <div class="form-group">
-            <label for="center" class="col-sm-2 control-label">Print detail</label>
             <div class="col-sm-4">
+              <h4>Print resolution</h4>
               <div id="map_detail"></div>
-            </div>
-            <div class="col-sm-6">
-              <p>Your map will print at this level of detail. Change the zoom level of this map to adjust your map zoom level.</p>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class='col-sm-10 col-sm-offset-2'>
-              <button id="submit-download" type="submit" class="btn btn-success btn-lg">
-                <i class='fa fa-download'></i>
-                Download map
-              </button>
-              <span id="download-link"></span>
+              <p>Your map will print with this level of detail. To adjust, change the zoom level above.</p>
+              <hr />
+              <p>
+                <button id="submit-download" type="submit" class="btn btn-success btn-lg">
+                  <i class='fa fa-download'></i>
+                  Download map
+                </button>
+              </p>
+              <p id="download-link"></p>
             </div>
           </div>
         </form>
+        <div class='clearfix'></div>
+        <br />
 
         <div class="footer">
-          <p class='pull-right'>&copy; <a href='http://datamade.us'>DataMade</a> and <a href='http://lisc-chicago.org'>LISC Chicago</a> | <a href='https://github.com/datamade/lascaux'><i class='icon-github'></i> Pull requests welcome!</a></p>
+          <p class='pull-right'>&copy; <a href='http://datamade.us'>DataMade</a> and <a href='http://lisc-chicago.org'>LISC Chicago</a> | <a href='https://github.com/datamade/lascaux'><i class='fa fa-github'></i> Pull requests welcome!</a></p>
         </div>
       </div>
     </div> <!-- /container -->
@@ -114,8 +107,16 @@
         var detail_zoom_offset = map_detail.getZoom() - 17;
         var map_zoom = map.getZoom() - detail_zoom_offset;
 
-        var width = Math.pow(2, map_zoom) * 0.009765625;
-        var height = Math.pow(2, map_zoom) * 0.013671875;
+        var width_constant = 0.009765625;
+        var height_constant = 0.013671875;
+
+        if ($("#dimensions").val() == '2550,3300') {
+          var width_constant = 0.01953125;
+          var height_constant = 0.025390625;
+        }
+
+        var width = Math.pow(2, map_zoom) * width_constant;
+        var height = Math.pow(2, map_zoom) * height_constant;
 
         return [width, height]
       }
@@ -183,7 +184,7 @@
         // Move the crosshair to the center of the map when the user pans
         map.on('move', function(e) {
             crosshair.setLatLng(map.getCenter());
-            map_detail.setView(map.getCenter(), 17);
+            map_detail.setView(map.getCenter());
         });
 
         map.on('baselayerchange', function(e) {
@@ -199,6 +200,10 @@
         });
 
         map_detail.on('zoomend', function(e) {
+          updatePrintBox();
+        });
+
+        $("#dimensions").on("change", function(e){
           updatePrintBox();
         });
 
@@ -235,7 +240,7 @@
           }
 
           var download_url = "/api?" + $.param(params)
-          $("#download-link").html("<a class='btn btn-info btn-lg' href='http://lascaux.datamade.us" + download_url + "'><i class='fa fa-link'></i> Link to this map</a>")
+          $("#download-link").html("<a class='btn btn-info' href='http://lascaux.datamade.us" + download_url + "'><i class='fa fa-link'></i> Link to this map</a>")
           window.open(download_url)
         });
       });
