@@ -35,10 +35,18 @@ def print_page():
         'zoom': request.args.get('zoom', 15),
         'center': request.args['center'].split(','),
     }
+    units = request.args.get('units', 'inches')
     if print_data.get('dimensions'):
-        print_data['dimensions'] = [(float(d) * 150) \
-                for d in print_data['dimensions'].split(',')]
-        short_side, long_side = sorted(print_data['dimensions'])
+        if units == 'inches':
+            dimensions = [(float(d) * 150) \
+                    for d in print_data['dimensions'].split(',')]
+        elif units == 'pixels':
+            dimensions = [float(d) for d in print_data['dimensions'].split(',')]
+        elif units == 'cms':
+            dimensions = [(float(d) * 0.393701) * 150 \
+                    for d in print_data['dimensions'].split(',')]
+        print_data['dimensions'] = dimensions
+        short_side, long_side = sorted(dimensions)
         tiles_across = math.ceil(short_side / 256.0)
         tiles_up = math.ceil(long_side / 256.0)
         page_size = (int(short_side), int(long_side), int(tiles_across), int(tiles_up),)
