@@ -29,17 +29,18 @@ def print_page():
         resp = make_response(json.dumps(r), 400)
         resp.headers['content-type'] = 'application/json'
         return resp
-    page_size = (1275,1650,5,7,)
+    page_size = (8.5,11,5,7,)
     print_data = {
         'dimensions': request.args.get('dimensions'),
         'zoom': request.args.get('zoom', 15),
         'center': request.args['center'].split(','),
     }
     if print_data.get('dimensions'):
-        print_data['dimensions'] = print_data['dimensions'].split(',')
+        print_data['dimensions'] = [(float(d) * 150) \
+                for d in print_data['dimensions'].split(',')]
         short_side, long_side = sorted(print_data['dimensions'])
-        tiles_across = math.ceil(float(short_side) / 256.0)
-        tiles_up = math.ceil(float(long_side) / 256.0)
+        tiles_across = math.ceil(short_side / 256.0)
+        tiles_up = math.ceil(long_side / 256.0)
         page_size = (int(short_side), int(long_side), int(tiles_across), int(tiles_up),)
     else:
         print_data['dimensions'] = page_size[:2]

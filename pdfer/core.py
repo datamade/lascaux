@@ -190,6 +190,6 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
     ctx.set_source_surface(image, 0, 0)
     ctx.paint()
     pdf.finish()
-    print pdf_name
+    
     return pdf_name
 

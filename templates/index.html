@@ -49,8 +49,8 @@
           <div class="form-group">
             <label for="dimensions" class="control-label">Paper size</label>
             <select class="form-control" id="dimensions">
-              <option value='1275,1650'>Letter 8 1/2" by 11"</option>
-              <option value='2550,3300'>Tabloid 11" x 17"</option>
+              <option value='8.5,11'>Letter 8 1/2" by 11"</option>
+              <option value='11,17'>Tabloid 11" x 17"</option>
             </select>
           </div>
           <div class="form-group">
@@ -122,9 +122,9 @@
       }
 
       function updatePrintBox() {
-        if (area_select) 
+        if (area_select)
           area_select.remove();
-        
+
         area_select = L.areaSelect({ width:getPrintBoxSize()[0], height:getPrintBoxSize()[1], keepAspectRatio: true });
         area_select.addTo(map);
       }
@@ -133,16 +133,16 @@
 
         var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
 
-        var mapbox_streets = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png', 
+        var mapbox_streets = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
-        var mapbox_satellite = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png', 
+        var mapbox_satellite = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
-        var stamen_toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', 
+        var stamen_toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg',
           { attribution: attribution, detectRetina: true });
 
-        var open_street_map = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+        var open_street_map = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
         // init map
@@ -155,16 +155,16 @@
           doubleClickZoom: false
         }
         map_detail = L.map('map_detail', map_detail_options).setView([41.87467,-87.62627], 17);
-        
+
         var baseMaps = {"Toner by Stamen": stamen_toner,
-                        "Streets by Mapbox": mapbox_streets, 
+                        "Streets by Mapbox": mapbox_streets,
                         "Satellite by Mapbox": mapbox_satellite,
                         "Open Street Map": open_street_map
                       };
 
         stamen_toner.addTo(map);
 
-        base_tiles_detail = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg', 
+        base_tiles_detail = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg',
           { attribution: attribution, detectRetina: true });
         base_tiles_detail.addTo(map_detail);
         base_tiles = stamen_toner._url;
