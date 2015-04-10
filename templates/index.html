@@ -47,11 +47,20 @@
             <p class="help-block">URL to a TileJSON source</p>
           </div>
           <div class="form-group">
-            <label for="dimensions" class="control-label">Paper size</label>
-            <select class="form-control" id="dimensions">
-              <option value='8.5,11'>Letter 8 1/2" by 11"</option>
-              <option value='11,17'>Tabloid 11" x 17"</option>
-            </select>
+            <div class="col-sm-8">
+              <label for="dimensions" class="control-label">Paper size</label>
+              <select class="form-control" id="dimensions">
+                <option value='8.5,11'>Letter 8 1/2" by 11"</option>
+                <option value='11,17'>Tabloid 11" x 17"</option>
+              </select>
+            </div>
+            <div class="col-sm-4">
+              <label for="output_format" class="control-label">Output format</label>
+              <select class="form-control" id="output_format">
+                <option value='pdf'>PDF</option>
+                <option value='jpeg'>JPEG</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <div class="col-sm-8">
@@ -236,7 +245,8 @@
             base_tiles: base_tiles,
             dimensions: $("#dimensions").val(),
             zoom: map_detail.getZoom(),
-            center: map.getCenter().lng + "," + map.getCenter().lat
+            center: map.getCenter().lng + "," + map.getCenter().lat,
+            output_format: $('#output_format').val()
           }
 
           var download_url = "/api?" + $.param(params)

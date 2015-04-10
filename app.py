@@ -36,6 +36,7 @@ def print_page():
         'center': request.args['center'].split(','),
     }
     units = request.args.get('units', 'inches')
+    output_format = request.args.get('output_format', 'pdf')
     if print_data.get('dimensions'):
         if units == 'inches':
             dimensions = [(float(d) * 150) \
@@ -56,11 +57,12 @@ def print_page():
         print_data['overlay_tiles'] = request.args['overlay_tiles']
     if request.args.get('base_tiles'):
         print_data['base_tiles'] = request.args['base_tiles']
-    path = pdfer(print_data, page_size=page_size)
+    path = pdfer(print_data, page_size=page_size, output=output_format)
     resp = make_response(open(path, 'rb').read())
     resp.headers['Content-Type'] = 'application/pdf'
     now = datetime.now().isoformat().split('.')[0]
-    resp.headers['Content-Disposition'] = 'attachment; filename=lascaux_%s.pdf' % now
+    resp.headers['Content-Disposition'] = \
+            'attachment; filename=lascaux_{0}.{1}'.format(now, output_format)
     return resp
 
 # UTILITY

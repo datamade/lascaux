@@ -1,6 +1,6 @@
 import requests
 from globalmaptiles import GlobalMercator
-from tilenames import tileXY, tileEdges
+from tilenames import tileXY, tileEdges, latlon2xy
 from operator import itemgetter
 from itertools import groupby
 import cv2
@@ -12,7 +12,6 @@ from helpers import dl_write_all, hex_to_rgb, get_pixel_coords
 from datetime import datetime
 from shapely.geometry import box, Polygon, MultiPolygon, Point
 
-mercator = GlobalMercator()
 
 PAGE_SIZES = {
     'letter': (1275,1650,5,7,),
@@ -32,7 +31,7 @@ def generateLinks(pattern, *args):
                 links.append(pattern.format(z=zoom, x=tx, y=ty))
     return links
 
-def pdfer(data, page_size=PAGE_SIZES['letter']):
+def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
     overlays = data.get('overlays')
     grid = {'zoom': data.get('zoom')}
     center_lon, center_lat = data['center']
@@ -126,6 +125,9 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
     #     grid[key] = {'bbox': tileEdges(float(parts[1]),float(parts[2]),int(parts[0]))}
     # d = {}
     # keys = sorted(grid.keys())
+    
+    # mercator = GlobalMercator()
+    
     # if overlays:
     #     polys = []
     #     for k,v in grid.items():
@@ -183,13 +185,32 @@ def pdfer(data, page_size=PAGE_SIZES['letter']):
     #                     ctx.stroke()
     #     im.write_to_png(outp_name)
     # scale = 1
-    pdf_name = outp_name.rstrip('.png') + '.pdf'
-    pdf = cairo.PDFSurface(pdf_name, page_width, page_height)
-    ctx = cairo.Context(pdf)
-    image = cairo.ImageSurface.create_from_png(outp_name)
-    ctx.set_source_surface(image, 0, 0)
-    ctx.paint()
-    pdf.finish()
     
-    return pdf_name
+    # Crop image from center
+    center_point_x, center_point_y = latlon2xy(float(center_lat), 
+                                               float(center_lon), 
+                                               float(data['zoom']))
+    offset_x = (center_point_x - float(center_tile_x)) * (float(1) / float(256))
+    offset_y = (center_point_y - float(center_tile_y)) * (float(1) / float(256))
+    outp_image = cv2.imread(outp_name, -1)
+    pixels_up, pixels_across, channels = outp_image.shape
+    center_x, center_y = (pixels_across / 2) + offset_x, (pixels_up / 2) + offset_y
+    start_y, end_y = center_y - (page_height / 2), center_y + (page_height / 2)
+    start_x, end_x = center_x - (page_width / 2), center_x + (page_width / 2)
+
+    cv2.imwrite(outp_name, outp_image[start_y:end_y, start_x:end_x])
+
+    if output == 'pdf':
+        outp_file_name = outp_name.rstrip('.png') + '.pdf'
+        pdf = cairo.PDFSurface(outp_file_name, page_width, page_height)
+        ctx = cairo.Context(pdf)
+        image = cairo.ImageSurface.create_from_png(outp_name)
+        ctx.set_source_surface(image, 0, 0)
+        ctx.paint()
+        pdf.finish()
+    elif output == 'jpeg':
+        outp_file_name = outp_name.rstrip('.png') + '.jpg'
+        jpeg = cv2.cvtColor(cv2.imread(outp_name, -1), cv2.COLOR_RGBA2RGB)
+        cv2.imwrite(outp_file_name, jpeg)
+    return outp_file_name
 
