@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 import json
 import math
-# from pdfer.core import pdfer
+from pdfer.core import pdfer
 
 from flask import Flask, request, make_response, render_template
 
