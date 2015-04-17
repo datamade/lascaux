@@ -7,6 +7,7 @@
     <meta name="author" content="">
 
     <title>Lascaux - Print high resolution maps from the web</title>
+    <link href='/static/images/favicon.ico' rel='shortcut icon' />
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.simplex.min.css" rel="stylesheet">
@@ -35,33 +36,49 @@
         </h1>
         <hr />
 
+        <div class='col-sm-12'>
+          <div class='alert alert-info'>
+            <p><i class='fa fa-info-circle'></i> <strong>Lascaux</strong> is a free tool for printing customized, high resolution maps. To get started, select a paper size, output format, map style and then <strong>pan and zoom the map</strong> to the area you want to print. You can increase the size of the covered area by zooming out the print resolution.</p>
+            <p>When you're done click <strong>Download map</strong> to get your printable map!</p>
+          </div>
+        </div>
+
         <form role="form">
           <div class="form-group">
-            <label for="overlay_tiles" class="control-label">Data source</label>
-            <div class='input-group'>
-              <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
-              <span class="input-group-btn">
-                <a href='#' id='add_overlay_tiles' class='btn btn-info'><i class='fa fa-plus-circle'></i> Add</a>
-              </span>
-            </div>
-            <p class="help-block">URL to a TileJSON source</p>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-8">
+            <div class="col-sm-4">
               <label for="dimensions" class="control-label">Paper size</label>
               <select class="form-control" id="dimensions">
                 <option value='8.5,11'>Letter 8 1/2" by 11"</option>
                 <option value='11,17'>Tabloid 11" x 17"</option>
+                <option value='custom'>Custom</option>
               </select>
+              <div class='row' id='custom_dimensions' style='display:none;'>
+                <div class="col-sm-6">
+                  <label for="dimensions_custom_width">Width</label>
+                  <div class="input-group">
+                    <input type="number" class="form-control" id="dimensions_custom_width" value='11'>
+                    <span class="input-group-addon" id="basic-addon2">in.</span>
+                  </div>
+                </div>
+              
+                <div class="col-sm-6">
+                  <label for="dimensions_custom_height">Height</label>
+                  <div class="input-group">
+                    <input type="number" class="form-control" id="dimensions_custom_height" value="17">
+                    <span class="input-group-addon" id="basic-addon2">in.</span>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="col-sm-4">
               <label for="output_format" class="control-label">Output format</label>
               <select class="form-control" id="output_format">
                 <option value='pdf'>PDF</option>
-                <option value='jpeg'>JPEG</option>
+                <option value='jpeg'>JPEG image</option>
               </select>
             </div>
           </div>
+          <div class='clearfix'></div>
           <div class="form-group">
             <div class="col-sm-8">
               <h4>Select area</h4>
@@ -70,7 +87,7 @@
             <div class="col-sm-4">
               <h4>Print resolution</h4>
               <div id="map_detail"></div>
-              <p>Your map will print with this level of detail. To adjust, change the zoom level above.</p>
+              <p>Your map will print with this level of detail. To adjust, change the zoom level in this window.</p>
               <hr />
               <p>
                 <button id="submit-download" type="submit" class="btn btn-success btn-lg">
@@ -79,6 +96,20 @@
                 </button>
               </p>
               <p id="download-link"></p>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="col-sm-8">
+              <br />
+              <label for="overlay_tiles" class="control-label">Add a data layer (optional)</label>
+              <div class='input-group'>
+                <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
+                <span class="input-group-btn">
+                  <a href='#' id='add_overlay_tiles' class='btn btn-info'><i class='fa fa-plus-circle'></i> Add</a>
+                </span>
+              </div>
+              <p class="help-block">Paste in a link to a TileJSON source and add it to your map</p>
             </div>
           </div>
         </form>
@@ -116,18 +147,25 @@
         var detail_zoom_offset = map_detail.getZoom() - 17;
         var map_zoom = map.getZoom() - detail_zoom_offset;
 
-        var width_constant = 0.009765625;
-        var height_constant = 0.013671875;
+        var dimensions = getPrintDimensions();
 
-        if ($("#dimensions").val() == '2550,3300') {
-          var width_constant = 0.01953125;
-          var height_constant = 0.025390625;
-        }
+        var width_constant = 0.001148897059 * dimensions[0];
+        var height_constant = 0.001242897727 * dimensions[1];
 
         var width = Math.pow(2, map_zoom) * width_constant;
         var height = Math.pow(2, map_zoom) * height_constant;
 
         return [width, height]
+      }
+
+      function getPrintDimensions() {
+        var dimensions = [8.5, 11];
+        if ($("#dimensions").val() == '11,17')
+          dimensions = [11, 17];
+        else if ($("#dimensions").val() == 'custom')
+          dimensions = [parseInt($('#dimensions_custom_width').val()), parseInt($('#dimensions_custom_height').val())];
+
+        return dimensions;
       }
 
       function updatePrintBox() {
@@ -165,10 +203,10 @@
         }
         map_detail = L.map('map_detail', map_detail_options).setView([41.87467,-87.62627], 17);
 
-        var baseMaps = {"Toner by Stamen": stamen_toner,
-                        "Streets by Mapbox": mapbox_streets,
-                        "Satellite by Mapbox": mapbox_satellite,
-                        "Open Street Map": open_street_map
+        var baseMaps = {"Black & White (Toner by Stamen)": stamen_toner,
+                        "Simple Streets (by Mapbox)": mapbox_streets,
+                        "Satellite (by Mapbox)": mapbox_satellite,
+                        "Building Addresses (Open Street Map)": open_street_map
                       };
 
         stamen_toner.addTo(map);
@@ -214,6 +252,18 @@
 
         $("#dimensions").on("change", function(e){
           updatePrintBox();
+
+          if ($(this).val() == 'custom')
+            $('#custom_dimensions').fadeIn();
+          else 
+            $('#custom_dimensions').fadeOut();
+        });
+
+        $("#dimensions_custom_width").on("change", function(e){
+          updatePrintBox();
+        });
+        $("#dimensions_custom_height").on("change", function(e){
+          updatePrintBox();
         });
 
         $("#add_overlay_tiles").on("click", function(e){
@@ -234,16 +284,19 @@
             layers.addOverlay(overlay_tiles, "Data source");
             overlay_tiles.addTo(map);
             overlay_tiles_detail.addTo(map_detail, {autoZIndex: true} );
+            $("#add_overlay_tiles").html("Added!");
           }
         });
 
         // click listener for download PDF button
         $("#submit-download").on("click", function(e){
           e.preventDefault();
+          var dimensions = getPrintDimensions();
+
           var params = {
             overlay_tiles: $("#overlay_tiles").val(),
             base_tiles: base_tiles,
-            dimensions: $("#dimensions").val(),
+            dimensions: dimensions[0] + "," + dimensions[1],
             zoom: map_detail.getZoom(),
             center: map.getCenter().lng + "," + map.getCenter().lat,
             output_format: $('#output_format').val()
