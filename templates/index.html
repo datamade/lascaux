@@ -176,6 +176,22 @@
         area_select.addTo(map);
       }
 
+      function getQueryStrings() { 
+        var assoc  = {};
+        var decode = function (s) { return decodeURIComponent(s.replace(/\+/g, " ")); };
+        var queryString = location.search.substring(1); 
+        var keyValues = queryString.split('&'); 
+
+        for(var i in keyValues) { 
+          var key = keyValues[i].split('=');
+          if (key.length > 1) {
+            assoc[decode(key[0])] = decode(key[1]);
+          }
+        } 
+
+        return assoc; 
+      } 
+
       $(function() {
 
         var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
@@ -306,6 +322,22 @@
           $("#download-link").html("<a class='btn btn-info' href='http://lascaux.datamade.us" + download_url + "'><i class='fa fa-link'></i> Link to this map</a>")
           window.open(download_url)
         });
+
+        //load stuff from query string
+        var qs = getQueryStrings();
+        var data_layer = qs["data_layer"];
+        var lat = qs["lat"];
+        var lon = qs["lon"];
+
+        window.setTimeout(function () {
+          if (lat && lon)
+            map.setView([lat,lon], 13);
+          if (data_layer) {
+            $("#overlay_tiles").val(data_layer);
+            $( "#add_overlay_tiles" ).trigger( "click" );
+          }
+        }, 500);
+
       });
     </script>
 
