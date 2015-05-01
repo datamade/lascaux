@@ -1,4 +1,5 @@
 import requests
+import math
 from globalmaptiles import GlobalMercator
 from tilenames import tileXY, tileEdges, latlon2xy
 from operator import itemgetter
@@ -83,7 +84,11 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
         fnames = ['/tmp/%s' % ('-'.join(f)) for f in images]
         array = []
         for img in fnames:
-            i = cv2.cvtColor(cv2.imread(img), cv2.COLOR_RGB2RGBA)
+            i = cv2.imread(img, -1)
+            if isinstance(i, type(None)):
+                i = np.zeros((256,256,4), np.uint8)
+            elif i.shape[2] != 4:
+                i = cv2.cvtColor(cv2.imread(img), cv2.COLOR_BGR2BGRA)
             array.append(i)
         arrays.append(np.vstack(array))
     outp = np.hstack(arrays)
@@ -98,19 +103,33 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
             fnames = ['/tmp/%s' % ('-'.join(f)) for f in images]
             array = []
             for img in fnames:
-                i = cv2.cvtColor(cv2.imread(img, -1), cv2.COLOR_RGB2RGBA)
+                i = cv2.imread(img, -1)
+                if isinstance(i, type(None)):
+                    i = np.zeros((256,256,4), np.uint8)
+                elif i.shape[2] != 4:
+                    i = cv2.cvtColor(cv2.imread(img), cv2.COLOR_BGR2BGRA)
                 array.append(i)
             arrays.append(np.vstack(array))
+            nuked = [os.remove(f) for f in fnames]
         outp = np.hstack(arrays)
         cv2.imwrite(overlay_outp_name, outp)
         base = cv2.imread(outp_name, -1)
         overlay = cv2.imread(overlay_outp_name, -1)
-        for c in range(0,3):
-            zero = overlay.shape[0]
-            one = overlay.shape[1]
-            base[0:0+zero, 0:0+one, c] = overlay[:,:,c] * \
-                (overlay[:,:,3]/255.0) + base[0:0+zero, 0:0+one, c] * \
-                (1.0 - overlay[:,:,3]/255.0)
+        overlay_g = cv2.cvtColor(overlay, cv2.COLOR_BGR2GRAY)
+        ret, mask = cv2.threshold(overlay_g, 10, 255, cv2.THRESH_BINARY)
+        inverted = cv2.bitwise_not(mask)
+        overlay = cv2.bitwise_not(overlay, overlay, mask=inverted)
+
+        base_alpha = 0.55
+        overlay_alpha = 1
+ 
+        for channel in range(3):
+            x,y,d = overlay.shape
+            base[:,:,channel] = (base[:,:,channel] * base_alpha + \
+                                     overlay[:,:,channel] * overlay_alpha * \
+                                     (1 - base_alpha)) / \
+                                     (base_alpha + overlay_alpha * (1 - base_alpha))
+        
         cv2.imwrite(outp_name, base)
 
     ###########################################################################

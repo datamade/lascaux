@@ -6,8 +6,7 @@ from hashlib import md5
 from multiprocessing import Pool
 mercator = GlobalMercator()
 
-def dl_write(*args):
-    url, base_name = args[0]
+def dl_write(url, base_name):
     path = urlparse(url)
     url_hash = md5(url).hexdigest()
     name = '{url_hash}_{base_name}_{parts}'\
@@ -24,10 +23,13 @@ def dl_write(*args):
     return name
 
 def dl_write_all(links, base_name):
-    pool = Pool(processes=4)
-    args = [(l, base_name,) for l in links]
-    names = pool.map(dl_write, args)
-    pool.close()
+    # pool = Pool(processes=4)
+    # args = [(l, base_name,) for l in links]
+    # names = pool.map(dl_write, args)
+    # pool.close()
+    names = []
+    for url in links:
+        names.append(dl_write(url, base_name))
     return names
 
 def hex_to_rgb(value):
