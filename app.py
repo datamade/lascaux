@@ -34,7 +34,11 @@ def print_page():
         'dimensions': request.args.get('dimensions'),
         'zoom': request.args.get('zoom', 15),
         'center': request.args['center'].split(','),
+        'shape_overlays': request.args.getlist('shape_overlays'),
+        'point_overlays': request.args.getlist('point_overlays'),
+        'beat_overlays': request.args.getlist('beat_overlays'),
     }
+    
     units = request.args.get('units', 'inches')
     output_format = request.args.get('output_format', 'pdf')
     if print_data.get('dimensions'):

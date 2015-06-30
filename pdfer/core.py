@@ -1,5 +1,6 @@
 import requests
 import math
+import json
 from globalmaptiles import GlobalMercator
 from tilenames import tileXY, tileEdges, latlon2xy
 from operator import itemgetter
@@ -33,7 +34,10 @@ def generateLinks(pattern, *args):
     return links
 
 def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
-    overlays = data.get('overlays')
+    
+    shape_overlays = data.get('shape_overlays')
+    point_overlays = data.get('point_overlays')
+
     grid = {'zoom': data.get('zoom')}
     center_lon, center_lat = data['center']
     center_tile_x, center_tile_y = tileXY(float(center_lat), float(center_lon), int(data['zoom']))
@@ -50,7 +54,7 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
     max_tile_y = min_tile_y + tiles_up
 
     # Get base layer tiles
-    base_pattern = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    base_pattern = 'http://d.tile.stamen.com/toner/{z}/{x}/{y}.png'
     if data.get('base_tiles'):
         base_pattern = data['base_tiles']
 
@@ -137,87 +141,96 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
     # Leaving it in just because it was a pain to come up with the first time #
     ###########################################################################
     
-    # for parts in image_names:
-    #     parts = parts[3:]
-    #     parts[-1] = parts[-1].rstrip('.png')
-    #     key = '-'.join(parts[-3:])
-    #     grid[key] = {'bbox': tileEdges(float(parts[1]),float(parts[2]),int(parts[0]))}
-    # d = {}
-    # keys = sorted(grid.keys())
+    for parts in base_image_names:
+        z,x,y = parts
+        y = y.rstrip('.png')
+        z = z.rsplit('_', 1)[1]
+        key = '-'.join([z,x,y])
+        grid[key] = {'bbox': tileEdges(float(x),float(y),int(z))}
+    d = {}
+    keys = sorted(grid.keys())
     
-    # mercator = GlobalMercator()
+    mercator = GlobalMercator()
     
-    # if overlays:
-    #     polys = []
-    #     for k,v in grid.items():
-    #         try:
-    #             one,two,three,four = grid[k]['bbox']
-    #             polys.append(box(two, one, four, three))
-    #         except TypeError:
-    #             pass
-    #     mpoly = MultiPolygon(polys)
-    #     bb_poly = box(*mpoly.bounds)
-    #     min_key = keys[0]
-    #     max_key = keys[-2]
-    #     bminx, bminy = grid[min_key]['bbox'][0], grid[min_key]['bbox'][1]
-    #     bmaxx, bmaxy = grid[max_key]['bbox'][2], grid[max_key]['bbox'][3]
-    #     bmin_mx, bmin_my = mercator.LatLonToMeters(bminx, bminy)
-    #     bmax_mx, bmax_my = mercator.LatLonToMeters(bmaxx, bmaxy)
-    #     bmin_px, bmin_py = mercator.MetersToPixels(bmin_mx,bmin_my,float(grid['zoom']))
-    #     bmax_px, bmax_py = mercator.MetersToPixels(bmax_mx,bmax_my,float(grid['zoom']))
-    #     bmin_rx, bmin_ry = mercator.PixelsToRaster(bmin_px,bmin_py,int(grid['zoom']))
-    #     im = cairo.ImageSurface.create_from_png(outp_name)
-    #     ctx = cairo.Context(im)
-    #     if overlays.get('shape_overlay'):
-    #         shape_overlay = overlays['shape_overlay']
-    #         color = hex_to_rgb('#f06eaa')
-    #         coords = shape_overlay['coordinates'][0]
-    #         x, y = get_pixel_coords(coords[0], grid['zoom'], bmin_rx, bmin_ry)
-    #         ctx.move_to(x,y)
-    #         ctx.set_line_width(4.0)
-    #         red, green, blue = [float(c) for c in color]
-    #         ctx.set_source_rgba(red/255, green/255, blue/255, 0.3)
-    #         for p in coords[1:]:
-    #             x, y = get_pixel_coords(p, grid['zoom'], bmin_rx, bmin_ry)
-    #             ctx.line_to(x,y)
-    #         ctx.close_path()
-    #         ctx.fill()
-    #         ctx.set_source_rgba(red/255, green/255, blue/255, 0.5)
-    #         for p in coords[1:]:
-    #             x, y = get_pixel_coords(p, grid['zoom'], bmin_rx, bmin_ry)
-    #             ctx.line_to(x,y)
-    #         ctx.close_path()
-    #         ctx.stroke()
-    #     ctx.set_line_width(2.0)
-    #     for point_overlay in overlays.get('point_overlays'):
-    #         color = hex_to_rgb(point_overlay['color'])
-    #         for p in point_overlay['points']:
-    #             if p[0] and p[1]:
-    #                 pt = Point((float(p[0]), float(p[1])))
-    #                 if bb_poly.contains(pt):
-    #                     nx, ny = get_pixel_coords(p, grid['zoom'], bmin_rx, bmin_ry)
-    #                     red, green, blue = [float(c) for c in color]
-    #                     ctx.set_source_rgba(red/255, green/255, blue/255, 0.6)
-    #                     ctx.arc(nx, ny, 5.0, 0, 50) # args: center-x, center-y, radius, ?, ?
-    #                     ctx.fill()
-    #                     ctx.arc(nx, ny, 5.0, 0, 50)
-    #                     ctx.stroke()
-    #     im.write_to_png(outp_name)
-    # scale = 1
+    if shape_overlays or point_overlays:
+        polys = []
+        for k,v in grid.items():
+            try:
+                one,two,three,four = grid[k]['bbox']
+                polys.append(box(two, one, four, three))
+            except TypeError:
+                pass
+        mpoly = MultiPolygon(polys)
+        bb_poly = box(*mpoly.bounds)
+        min_key = keys[0]
+        max_key = keys[-2]
+        bminx, bminy = grid[min_key]['bbox'][0], grid[min_key]['bbox'][1]
+        bmaxx, bmaxy = grid[max_key]['bbox'][2], grid[max_key]['bbox'][3]
+        bmin_mx, bmin_my = mercator.LatLonToMeters(bminx, bminy)
+        bmax_mx, bmax_my = mercator.LatLonToMeters(bmaxx, bmaxy)
+        bmin_px, bmin_py = mercator.MetersToPixels(bmin_mx,bmin_my,float(grid['zoom']))
+        bmax_px, bmax_py = mercator.MetersToPixels(bmax_mx,bmax_my,float(grid['zoom']))
+        bmin_rx, bmin_ry = mercator.PixelsToRaster(bmin_px,bmin_py,int(grid['zoom']))
+        
+        im = cairo.ImageSurface.create_from_png(outp_name)
+        ctx = cairo.Context(im)
+
+        if shape_overlays:
+            for shape_overlay in shape_overlays:
+                shape_overlay = json.loads(shape_overlay)
+                if shape_overlay.get('geometry'):
+                    shape_overlay = shape_overlay['geometry']
+                color = hex_to_rgb('#f06eaa')
+                coords = shape_overlay['coordinates'][0]
+                x, y = get_pixel_coords(coords[0], grid['zoom'], bmin_rx, bmin_ry)
+                ctx.move_to(x,y)
+                ctx.set_line_width(4.0)
+                red, green, blue = [float(c) for c in color]
+                ctx.set_source_rgba(red/255, green/255, blue/255, 0.3)
+                for p in coords[1:]:
+                    x, y = get_pixel_coords(p, grid['zoom'], bmin_rx, bmin_ry)
+                    ctx.line_to(x,y)
+                ctx.close_path()
+                ctx.fill()
+                ctx.set_source_rgba(red/255, green/255, blue/255, 0.5)
+                for p in coords[1:]:
+                    x, y = get_pixel_coords(p, grid['zoom'], bmin_rx, bmin_ry)
+                    ctx.line_to(x,y)
+                ctx.close_path()
+                ctx.stroke()
+        ctx.set_line_width(2.0)
+
+        if point_overlays:
+            for point_overlay in point_overlays:
+                point_overlay = json.loads(point_overlay)
+                color = hex_to_rgb(point_overlay['color'])
+                for p in point_overlay['points']:
+                    if p[0] and p[1]:
+                        pt = Point((float(p[0]), float(p[1])))
+                        if bb_poly.contains(pt):
+                            nx, ny = get_pixel_coords(p, grid['zoom'], bmin_rx, bmin_ry)
+                            red, green, blue = [float(c) for c in color]
+                            ctx.set_source_rgba(red/255, green/255, blue/255, 0.6)
+                            ctx.arc(nx, ny, 5.0, 0, 50) # args: center-x, center-y, radius, ?, ?
+                            ctx.fill()
+                            ctx.arc(nx, ny, 5.0, 0, 50)
+                            ctx.stroke()
+        im.write_to_png(outp_name)
+    scale = 1
     
     # Crop image from center
-    center_point_x, center_point_y = latlon2xy(float(center_lat), 
-                                               float(center_lon), 
-                                               float(data['zoom']))
-    offset_x = (center_point_x - float(center_tile_x)) * (float(1) / float(256))
-    offset_y = (center_point_y - float(center_tile_y)) * (float(1) / float(256))
-    outp_image = cv2.imread(outp_name, -1)
-    pixels_up, pixels_across, channels = outp_image.shape
-    center_x, center_y = (pixels_across / 2) + offset_x, (pixels_up / 2) + offset_y
-    start_y, end_y = center_y - (page_height / 2), center_y + (page_height / 2)
-    start_x, end_x = center_x - (page_width / 2), center_x + (page_width / 2)
+    # center_point_x, center_point_y = latlon2xy(float(center_lat), 
+    #                                            float(center_lon), 
+    #                                            float(data['zoom']))
+    # offset_x = (center_point_x - float(center_tile_x)) * (float(1) / float(256))
+    # offset_y = (center_point_y - float(center_tile_y)) * (float(1) / float(256))
+    # outp_image = cv2.imread(outp_name, -1)
+    # pixels_up, pixels_across, channels = outp_image.shape
+    # center_x, center_y = (pixels_across / 2) + offset_x, (pixels_up / 2) + offset_y
+    # start_y, end_y = center_y - (page_height / 2), center_y + (page_height / 2)
+    # start_x, end_x = center_x - (page_width / 2), center_x + (page_width / 2)
 
-    cv2.imwrite(outp_name, outp_image[start_y:end_y, start_x:end_x])
+    # cv2.imwrite(outp_name, outp_image[start_y:end_y, start_x:end_x])
 
     if output == 'pdf':
         outp_file_name = outp_name.rstrip('.png') + '.pdf'
