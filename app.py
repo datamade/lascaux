@@ -17,10 +17,14 @@ app.url_map.strict_slashes = False
 def index():
     return render_app_template('index.html')
 
-@app.route('/api', methods=['GET'])
+@app.route('/api', methods=['POST', 'GET'])
 def print_page():
-    zoom = request.args.get('zoom')
-    center = request.args.get('center')
+    if request.method == 'GET':
+        data = request.args.copy()
+    else: 
+        data = request.form.copy()
+    zoom = data.get('zoom')
+    center = data.get('center')
     if not center:
         r = {
             'status': 'error',
@@ -31,16 +35,16 @@ def print_page():
         return resp
     page_size = (8.5,11,5,7,)
     print_data = {
-        'dimensions': request.args.get('dimensions'),
-        'zoom': request.args.get('zoom', 15),
-        'center': request.args['center'].split(','),
-        'shape_overlays': request.args.getlist('shape_overlays'),
-        'point_overlays': request.args.getlist('point_overlays'),
-        'beat_overlays': request.args.getlist('beat_overlays'),
+        'dimensions': data.get('dimensions'),
+        'zoom': data.get('zoom', 15),
+        'center': data['center'].split(','),
+        'shape_overlays': data.getlist('shape_overlays'),
+        'point_overlays': data.getlist('point_overlays'),
+        'beat_overlays': data.getlist('beat_overlays'),
     }
     
-    units = request.args.get('units', 'inches')
-    output_format = request.args.get('output_format', 'pdf')
+    units = data.get('units', 'inches')
+    output_format = data.get('output_format', 'pdf')
     if print_data.get('dimensions'):
         if units == 'inches':
             dimensions = [(float(d) * 150) \
@@ -57,10 +61,10 @@ def print_page():
         page_size = (int(short_side), int(long_side), int(tiles_across), int(tiles_up),)
     else:
         print_data['dimensions'] = page_size[:2]
-    if request.args.get('overlay_tiles'):
-        print_data['overlay_tiles'] = request.args['overlay_tiles']
-    if request.args.get('base_tiles'):
-        print_data['base_tiles'] = request.args['base_tiles']
+    if data.get('overlay_tiles'):
+        print_data['overlay_tiles'] = data['overlay_tiles']
+    if data.get('base_tiles'):
+        print_data['base_tiles'] = data['base_tiles']
     path = pdfer(print_data, page_size=page_size, output=output_format)
     resp = make_response(open(path, 'rb').read())
     resp.headers['Content-Type'] = 'application/pdf'

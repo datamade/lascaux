@@ -12,7 +12,8 @@ import os
 import random
 from helpers import dl_write_all, hex_to_rgb, get_pixel_coords
 from datetime import datetime
-from shapely.geometry import box, Polygon, MultiPolygon, Point
+from shapely.geometry import box, Polygon, MultiPolygon, Point, \
+        LineString, MultiPoint
 
 
 PAGE_SIZES = {
@@ -28,7 +29,8 @@ def generateLinks(pattern, *args):
             
             # handle {s} parameter in tile links for load balancing
             if "{s}" in pattern:
-                links.append(pattern.format(s=random.choice(["a", "b", "c"]), z=zoom, x=tx, y=ty))
+                links.append(pattern.format(s=random.choice(["a", "b", "c"]), 
+                                            z=zoom, x=tx, y=ty))
             else:
                 links.append(pattern.format(z=zoom, x=tx, y=ty))
     return links
@@ -40,14 +42,17 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
 
     grid = {'zoom': data.get('zoom')}
     center_lon, center_lat = data['center']
-    center_tile_x, center_tile_y = tileXY(float(center_lat), float(center_lon), int(data['zoom']))
+    center_tile_x, center_tile_y = tileXY(float(center_lat), 
+                                          float(center_lon), 
+                                          int(data['zoom']))
+
     dim_across, dim_up = data['dimensions']
+    
     if dim_across > dim_up:
         page_height, page_width, tiles_up, tiles_across = page_size
-        orientation = 'landscape'
     else:
         page_width, page_height, tiles_across, tiles_up = page_size
-        orientation = 'portrait'
+    
     min_tile_x = center_tile_x - (tiles_across / 2)
     min_tile_y = center_tile_y - (tiles_up / 2)
     max_tile_x = min_tile_x + tiles_across
@@ -64,6 +69,7 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
                                min_tile_y, 
                                max_tile_x, 
                                max_tile_y)
+
     base_names = dl_write_all(base_links, 'base')
     
     # Get overlay tiles
@@ -71,17 +77,108 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
     if data.get('overlay_tiles'):
         overlay_pattern = data['overlay_tiles']
         overlay_links = generateLinks(overlay_pattern, 
-                                   grid['zoom'], 
-                                   min_tile_x, 
-                                   min_tile_y, 
-                                   max_tile_x, 
-                                   max_tile_y)
+                                      grid['zoom'], 
+                                      min_tile_x, 
+                                      min_tile_y, 
+                                      max_tile_x, 
+                                      max_tile_y)
+
         overlay_names = dl_write_all(overlay_links, 'overlay')
+
     now = datetime.now()
     date_string = datetime.strftime(now, '%Y-%m-%d_%H-%M-%S')
     outp_name = os.path.join('/tmp', '{0}.png'.format(date_string))
     base_image_names = ['-'.join(l.split('/')[-3:]) for l in base_names]
     base_image_names = sorted([i.split('-')[-3:] for i in base_image_names], key=itemgetter(1))
+    
+    for parts in base_image_names:
+        z,x,y = parts
+        y = y.rstrip('.png').rstrip('.jpg')
+        z = z.rsplit('_', 1)[1]
+        key = '-'.join([z,x,y])
+        grid[key] = {'bbox': tileEdges(float(x),float(y),int(z))}
+    
+    keys = sorted(grid.keys())
+    
+    mercator = GlobalMercator()
+    bb_poly = None
+    
+    bmin_rx = None
+    bmin_ry = None
+
+    if shape_overlays or point_overlays:
+        polys = []
+        for k,v in grid.items():
+            try:
+                one,two,three,four = grid[k]['bbox']
+                polys.append(box(two, one, four, three))
+            except TypeError:
+                pass
+        mpoly = MultiPolygon(polys)
+        bb_poly = box(*mpoly.bounds)
+        min_key = keys[0]
+        max_key = keys[-2]
+        bminx, bminy = grid[min_key]['bbox'][0], grid[min_key]['bbox'][1]
+        bmaxx, bmaxy = grid[max_key]['bbox'][2], grid[max_key]['bbox'][3]
+        bmin_mx, bmin_my = mercator.LatLonToMeters(bminx, bminy)
+        bmax_mx, bmax_my = mercator.LatLonToMeters(bmaxx, bmaxy)
+        bmin_px, bmin_py = mercator.MetersToPixels(bmin_mx,bmin_my,float(grid['zoom']))
+        bmax_px, bmax_py = mercator.MetersToPixels(bmax_mx,bmax_my,float(grid['zoom']))
+        bmin_rx, bmin_ry = mercator.PixelsToRaster(bmin_px,bmin_py,int(grid['zoom']))
+        
+        if shape_overlays:
+            all_polys = []
+            for shape_overlay in shape_overlays:
+                shape_overlay = json.loads(shape_overlay)
+                if shape_overlay.get('geometry'):
+                    shape_overlay = shape_overlay['geometry']
+                coords = shape_overlay['coordinates'][0]
+                all_polys.append(Polygon(coords))
+            mpoly = MultiPolygon(all_polys)
+            
+            one, two, three, four, five = list(box(*mpoly.bounds).exterior.coords)
+            
+            left, right = LineString([one, two]), LineString([three, four])
+            top, bottom = LineString([two, three]), LineString([four, five])
+
+            left_to_right = left.distance(right)
+            top_to_bottom = top.distance(bottom)
+
+            if left_to_right > top_to_bottom:
+                page_height, page_width, _, _ = page_size
+            else:
+                page_width, page_height, _, _ = page_size
+
+            center_lon, center_lat = list(mpoly.centroid.coords)[0]
+
+
+        if point_overlays:
+            all_points = []
+            
+            for point_overlay in point_overlays:
+                point_overlay = json.loads(point_overlay)
+                for p in point_overlay['points']:
+                    if p[0] and p[1]:
+                        all_points.append(p)
+            
+            mpoint = MultiPoint(all_points)
+            center_lon, center_lat = list(mpoint.centroid.coords)[0]
+            
+            one, two, three, four, five = list(box(*mpoint.bounds).exterior.coords)
+            
+            left, right = LineString([one, two]), LineString([three, four])
+            top, bottom = LineString([two, three]), LineString([four, five])
+
+            left_to_right = left.distance(right)
+            top_to_bottom = top.distance(bottom)
+
+            if left_to_right > top_to_bottom:
+                page_height, page_width, _, _ = page_size
+            else:
+                page_width, page_height, _, _ = page_size
+
+            center_lon, center_lat = list(mpoint.centroid.coords)[0]
+        
     arrays = []
     for k,g in groupby(base_image_names, key=itemgetter(1)):
         images = list(g)
@@ -141,36 +238,7 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
     # Leaving it in just because it was a pain to come up with the first time #
     ###########################################################################
     
-    for parts in base_image_names:
-        z,x,y = parts
-        y = y.rstrip('.png')
-        z = z.rsplit('_', 1)[1]
-        key = '-'.join([z,x,y])
-        grid[key] = {'bbox': tileEdges(float(x),float(y),int(z))}
-    d = {}
-    keys = sorted(grid.keys())
-    
-    mercator = GlobalMercator()
-    
     if shape_overlays or point_overlays:
-        polys = []
-        for k,v in grid.items():
-            try:
-                one,two,three,four = grid[k]['bbox']
-                polys.append(box(two, one, four, three))
-            except TypeError:
-                pass
-        mpoly = MultiPolygon(polys)
-        bb_poly = box(*mpoly.bounds)
-        min_key = keys[0]
-        max_key = keys[-2]
-        bminx, bminy = grid[min_key]['bbox'][0], grid[min_key]['bbox'][1]
-        bmaxx, bmaxy = grid[max_key]['bbox'][2], grid[max_key]['bbox'][3]
-        bmin_mx, bmin_my = mercator.LatLonToMeters(bminx, bminy)
-        bmax_mx, bmax_my = mercator.LatLonToMeters(bmaxx, bmaxy)
-        bmin_px, bmin_py = mercator.MetersToPixels(bmin_mx,bmin_my,float(grid['zoom']))
-        bmax_px, bmax_py = mercator.MetersToPixels(bmax_mx,bmax_my,float(grid['zoom']))
-        bmin_rx, bmin_ry = mercator.PixelsToRaster(bmin_px,bmin_py,int(grid['zoom']))
         
         im = cairo.ImageSurface.create_from_png(outp_name)
         ctx = cairo.Context(im)
@@ -219,25 +287,28 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
     scale = 1
     
     # Crop image from center
-    # center_point_x, center_point_y = latlon2xy(float(center_lat), 
-    #                                            float(center_lon), 
-    #                                            float(data['zoom']))
-    # offset_x = (center_point_x - float(center_tile_x)) * (float(1) / float(256))
-    # offset_y = (center_point_y - float(center_tile_y)) * (float(1) / float(256))
-    # outp_image = cv2.imread(outp_name, -1)
-    # pixels_up, pixels_across, channels = outp_image.shape
-    # center_x, center_y = (pixels_across / 2) + offset_x, (pixels_up / 2) + offset_y
-    # start_y, end_y = center_y - (page_height / 2), center_y + (page_height / 2)
-    # start_x, end_x = center_x - (page_width / 2), center_x + (page_width / 2)
 
-    # cv2.imwrite(outp_name, outp_image[start_y:end_y, start_x:end_x])
+    center_point_x, center_point_y = latlon2xy(float(center_lat), 
+                                               float(center_lon), 
+                                               float(data['zoom']))
+
+    offset_x = (center_point_x - float(center_tile_x)) * (float(1) / float(256))
+    offset_y = (center_point_y - float(center_tile_y)) * (float(1) / float(256))
+    outp_image = cv2.imread(outp_name, -1)
+    pixels_up, pixels_across, channels = outp_image.shape
+    center_x, center_y = (pixels_across / 2) + offset_x, (pixels_up / 2) + offset_y
+    start_y, end_y = center_y - (page_height / 2), center_y + (page_height / 2)
+    start_x, end_x = center_x - (page_width / 2), center_x + (page_width / 2)
+
+    cv2.imwrite(outp_name, outp_image[start_y:end_y, start_x:end_x])
 
     if output == 'pdf':
         outp_file_name = outp_name.rstrip('.png') + '.pdf'
+
         pdf = cairo.PDFSurface(outp_file_name, page_width, page_height)
         ctx = cairo.Context(pdf)
         image = cairo.ImageSurface.create_from_png(outp_name)
-        ctx.set_source_surface(image, 0, 0)
+        ctx.set_source_surface(image)
         ctx.paint()
         pdf.finish()
     elif output == 'jpeg':
