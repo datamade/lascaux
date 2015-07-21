@@ -176,8 +176,10 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
                 page_height, page_width, _, _ = page_size
             else:
                 page_width, page_height, _, _ = page_size
-
+            
             center_lon, center_lat = list(mpoint.centroid.coords)[0]
+
+            print(center_lon, center_lat)
         
     arrays = []
     for k,g in groupby(base_image_names, key=itemgetter(1)):
@@ -292,8 +294,9 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
                                                float(center_lon), 
                                                float(data['zoom']))
 
-    offset_x = (center_point_x - float(center_tile_x)) * (float(1) / float(256))
-    offset_y = (center_point_y - float(center_tile_y)) * (float(1) / float(256))
+    offset_x = (center_point_x - float(center_tile_x)) + 50
+    offset_y = (center_point_y - float(center_tile_y)) - 50
+
     outp_image = cv2.imread(outp_name, -1)
     pixels_up, pixels_across, channels = outp_image.shape
     center_x, center_y = (pixels_across / 2) + offset_x, (pixels_up / 2) + offset_y
