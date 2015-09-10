@@ -202,7 +202,7 @@
         var mapbox_satellite = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
-        var stamen_toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg',
+        var stamen_toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
         var open_street_map = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -227,7 +227,7 @@
 
         stamen_toner.addTo(map);
 
-        base_tiles_detail = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.jpg',
+        base_tiles_detail = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
         base_tiles_detail.addTo(map_detail);
         base_tiles = stamen_toner._url;
