@@ -5,10 +5,15 @@ import math
 from pdfer.core import pdfer
 
 from flask import Flask, request, make_response, render_template
+from raven.contrib.flask import Sentry
+from app_config import SENTRY_DSN
+
 
 app = Flask(__name__)
 
 app.url_map.strict_slashes = False
+
+sentry = Sentry(app, dsn=SENTRY_DSN)
 
 # expects GeoJSON object as a string
 # client will need to use JSON.stringify() or similar

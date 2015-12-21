@@ -3,3 +3,4 @@ numpy
 requests
 shapely
 cairocffi
+raven[flask]
