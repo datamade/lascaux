@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import SSLError
 import os
 from urlparse import urlparse
 from globalmaptiles import GlobalMercator
@@ -17,7 +18,11 @@ def dl_write(url, base_name):
     try:
         f = open('/tmp/' + name)
     except IOError:
-        tile = requests.get(url, verify=False)
+        try:
+            tile = requests.get(url, verify=False)
+        except SSLError:
+            url = url.replace('https:', 'http:')
+            tile = requests.get(url, verify=False)
         outp = open('/tmp/' + name, 'wb')
         outp.write(tile.content)
     return name
