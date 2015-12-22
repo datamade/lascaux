@@ -17,7 +17,7 @@ def dl_write(url, base_name):
     try:
         f = open('/tmp/' + name)
     except IOError:
-        tile = requests.get(url)
+        tile = requests.get(url, verify=False)
         outp = open('/tmp/' + name, 'wb')
         outp.write(tile.content)
     return name
