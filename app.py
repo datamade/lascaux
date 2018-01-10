@@ -26,7 +26,7 @@ def index():
 def print_page():
     if request.method == 'GET':
         data = request.args.copy()
-    else: 
+    else:
         data = request.form.copy()
     zoom = data.get('zoom')
     center = data.get('center')
@@ -47,7 +47,7 @@ def print_page():
         'point_overlays': data.getlist('point_overlays'),
         'beat_overlays': data.getlist('beat_overlays'),
     }
-    
+
     units = data.get('units', 'inches')
     output_format = data.get('output_format', 'pdf')
     if print_data.get('dimensions'):

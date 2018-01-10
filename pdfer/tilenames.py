@@ -2,9 +2,9 @@
 #-------------------------------------------------------
 # Translates between lat/long and the slippy-map tile
 # numbering scheme
-# 
+#
 # http://wiki.openstreetmap.org/index.php/Slippy_map_tilenames
-# 
+#
 # Written by Oliver White, 2007
 # This file is public-domain
 #-------------------------------------------------------
@@ -25,7 +25,7 @@ def latlon2xy(lat,lon,z):
   n = numTiles(z)
   x,y = latlon2relativeXY(lat,lon)
   return(n*x, n*y)
-  
+
 def tileXY(lat, lon, z):
   x,y = latlon2xy(lat,lon,z)
   return(int(x),int(y))
@@ -36,7 +36,7 @@ def xy2latlon(x,y,z):
   lat = mercatorToLat(pi * (1 - 2 * relY))
   lon = -180.0 + 360.0 * x / n
   return(lat,lon)
-  
+
 def latEdges(y,z):
   n = numTiles(z)
   unit = 1 / n
@@ -52,7 +52,7 @@ def lonEdges(x,z):
   lon1 = -180 + x * unit
   lon2 = lon1 + unit
   return(lon1,lon2)
-  
+
 def tileEdges(x,y,z):
   lat1,lat2 = latEdges(y,z)
   lon1,lon2 = lonEdges(x,z)
@@ -77,14 +77,13 @@ def tileLayerBase(layer):
     "mapnik": "http://tile.openstreetmap.org/mapnik/"
     }
   return(layers[layer])
-  
+
 def tileURL(x,y,z,layer):
   return "%s%d/%d/%d.%s" % (tileLayerBase(layer),z,x,y,tileLayerExt(layer))
 
 if __name__ == "__main__":
   for z in range(0,17):
     x,y = tileXY(51.50610, -0.119888, z)
-    
+
     s,w,n,e = tileEdges(x,y,z)
-    print "%d: %d,%d --> %1.3f :: %1.3f, %1.3f :: %1.3f" % (z,x,y,s,n,w,e)
-    #print "<img src='%s'><br>" % tileURL(x,y,z)
+    print("%d: %d,%d --> %1.3f :: %1.3f, %1.3f :: %1.3f" % (z,x,y,s,n,w,e))

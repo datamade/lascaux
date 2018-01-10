@@ -1,19 +1,20 @@
 import requests
 from requests.exceptions import SSLError
 import os
-from urlparse import urlparse
-from globalmaptiles import GlobalMercator
+from urllib.parse import urlparse
+from .globalmaptiles import GlobalMercator
 from hashlib import md5
 from multiprocessing import Pool
+
 mercator = GlobalMercator()
 
 def dl_write(url, base_name):
     path = urlparse(url)
-    url_hash = md5(url).hexdigest()
+    url_hash = md5(url.encode('utf-8')).hexdigest()
     name = '{url_hash}_{base_name}_{parts}'\
-        .format(base_name=base_name, 
+        .format(base_name=base_name,
                 parts='-'.join(path.path.split('/')[-3:]),
-                url_hash=unicode(url_hash))
+                url_hash=str(url_hash))
     full_path = os.path.join('/tmp', name)
     try:
         f = open('/tmp/' + name)
@@ -40,7 +41,7 @@ def dl_write_all(links, base_name):
 def hex_to_rgb(value):
     value = value.lstrip('#')
     lv = len(value)
-    return tuple(int(value[i:i+lv/3], 16) for i in range(0, lv, lv/3))
+    return tuple(int(value[i:i+int(lv/3)], 16) for i in range(0, lv, int(lv/3)))
 
 def get_pixel_coords(p, zoom, bmin_rx, bmin_ry):
     mx, my = mercator.LatLonToMeters(float(p[1]), float(p[0]))
