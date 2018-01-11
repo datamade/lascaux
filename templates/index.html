@@ -22,7 +22,7 @@
       <script src="/static/js/respond.min.js"></script>
     <![endif]-->
 
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
     <link rel="stylesheet" href="/static/css/leaflet-areaselect.css" />
   </head>
 
@@ -60,7 +60,7 @@
                     <span class="input-group-addon" id="basic-addon2">in.</span>
                   </div>
                 </div>
-              
+
                 <div class="col-sm-6">
                   <label for="dimensions_custom_height">Height</label>
                   <div class="input-group">
@@ -98,13 +98,13 @@
               <p id="download-link"></p>
             </div>
           </div>
-          
+
           <div class="form-group">
             <div class="col-sm-8">
               <br />
               <label for="overlay_tiles" class="control-label">Add a data layer (optional)</label>
               <div class='input-group'>
-                <input type="text" class="form-control" id="overlay_tiles" placeholder="http://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
+                <input type="text" class="form-control" id="overlay_tiles" placeholder="https://a.tiles.mapbox.com/v3/datamade.hnmob3j3/{z}/{x}/{y}.png">
                 <span class="input-group-btn">
                   <a href='#' id='add_overlay_tiles' class='btn btn-info'><i class='fa fa-plus-circle'></i> Add</a>
                 </span>
@@ -117,7 +117,7 @@
         <br />
 
         <div class="footer">
-          <p class='pull-right'>&copy; <a href='http://datamade.us'>DataMade</a> and <a href='http://lisc-chicago.org'>LISC Chicago</a> | <a href='https://github.com/datamade/lascaux'><i class='fa fa-github'></i> Pull requests welcome!</a></p>
+          <p class='pull-right'>&copy; <a href='https://datamade.us'>DataMade</a> and <a href='http://lisc-chicago.org'>LISC Chicago</a> | <a href='https://github.com/datamade/lascaux'><i class='fa fa-github'></i> Pull requests welcome!</a></p>
         </div>
       </div>
     </div> <!-- /container -->
@@ -128,7 +128,7 @@
     <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/moment.min.js"></script>
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
     <script src="/static/js/leaflet-areaselect.js"></script>
     <script src="/static/js/analytics_lib.js"></script>
 
@@ -176,21 +176,21 @@
         area_select.addTo(map);
       }
 
-      function getQueryStrings() { 
+      function getQueryStrings() {
         var assoc  = {};
         var decode = function (s) { return decodeURIComponent(s.replace(/\+/g, " ")); };
-        var queryString = location.search.substring(1); 
-        var keyValues = queryString.split('&'); 
+        var queryString = location.search.substring(1);
+        var keyValues = queryString.split('&');
 
-        for(var i in keyValues) { 
+        for(var i in keyValues) {
           var key = keyValues[i].split('=');
           if (key.length > 1) {
             assoc[decode(key[0])] = decode(key[1]);
           }
-        } 
+        }
 
-        return assoc; 
-      } 
+        return assoc;
+      }
 
       $(function() {
 
@@ -202,10 +202,10 @@
         var mapbox_satellite = L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.k92mcmc8/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
-        var stamen_toner = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png',
+        var stamen_toner = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
-        var open_street_map = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        var open_street_map = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
         // init map
@@ -227,7 +227,7 @@
 
         stamen_toner.addTo(map);
 
-        base_tiles_detail = L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png',
+        base_tiles_detail = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
         base_tiles_detail.addTo(map_detail);
         base_tiles = stamen_toner._url;
@@ -271,7 +271,7 @@
 
           if ($(this).val() == 'custom')
             $('#custom_dimensions').fadeIn();
-          else 
+          else
             $('#custom_dimensions').fadeOut();
         });
 
@@ -319,7 +319,7 @@
           }
 
           var download_url = "/api?" + $.param(params)
-          $("#download-link").html("<a class='btn btn-info' href='http://lascaux.datamade.us" + download_url + "'><i class='fa fa-link'></i> Link to this map</a>")
+          $("#download-link").html("<a class='btn btn-info' href='https://lascaux.datamade.us" + download_url + "'><i class='fa fa-link'></i> Link to this map</a>")
           window.open(download_url)
         });
 
