@@ -307,8 +307,6 @@ def pdfer(data, page_size=PAGE_SIZES['letter'], output='pdf'):
     cv2.imwrite(outp_name, outp_image[math.floor(start_y):math.ceil(end_y), math.floor(start_x):math.ceil(end_x)])
 
     if output == 'pdf':
-        import pdb
-        pdb.set_trace()
         outp_file_name = outp_name.rstrip('.png') + '.pdf'
 
         pdf = cairo.PDFSurface(outp_file_name, page_width, page_height)
