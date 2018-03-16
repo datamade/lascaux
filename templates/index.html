@@ -208,6 +208,9 @@
         var open_street_map = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           { attribution: attribution, detectRetina: true });
 
+        var carto_dark_matter = L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png',
+          { attribution: attribution, detectRetina: true });
+
         // init map
         map = L.map('map', { scrollWheelZoom: false }).setView([41.87467,-87.62627], 13);
 
@@ -220,6 +223,7 @@
         map_detail = L.map('map_detail', map_detail_options).setView([41.87467,-87.62627], 17);
 
         var baseMaps = {"Black & White (Toner by Stamen)": stamen_toner,
+                        "Black & Grey (Carto Dark Matter)": carto_dark_matter,
                         "Simple Streets (by Mapbox)": mapbox_streets,
                         "Satellite (by Mapbox)": mapbox_satellite,
                         "Building Addresses (Open Street Map)": open_street_map
